@@ -1,12 +1,33 @@
+'use client';
+
+import HostIdle from '@src/components/host/HostIdle';
+import { useHostStore } from '@/store/zustand';
+
 import React from 'react';
+import HostCreateRoom from '@/src/components/host/HostCreateRoom';
+import HostLobby from '@/src/components/host/HostLobby';
+
+const renderSwitch = (param: string) => {
+  switch (param) {
+    case 'idle':
+      return <HostIdle />;
+    case 'create':
+      return <HostCreateRoom />;
+    case 'lobby':
+      return <HostLobby />;
+    case 'start':
+      return <HostLobby />;
+    default:
+      return <HostIdle />;
+  }
+};
 
 export default function HostPage() {
+  const { game } = useHostStore();
   return (
-    <div>
+    <div className='min-h-screen'>
       <title>Host page</title>
-      <div>
-        <p>This is Host page</p>
-      </div>
+      {renderSwitch(game)}
     </div>
   );
 }

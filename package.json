@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "prepare": "husky",
     "format": "prettier --ignore-path .gitignore --write **/*.{js,jsx,ts,tsx,json,css}",
@@ -14,11 +14,18 @@
     "check-all": "yarn check-format && yarn check-types && yarn lint"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "eslint-config-prettier": "^9.1.0",
+    "framer-motion": "^11.1.9",
     "lint-staged": "^15.2.2",
     "next": "14.2.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-element-to-jsx-string": "^15.0.0",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
+    "tailwind-merge": "^2.3.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/node": "^20",
