@@ -1,3 +1,4 @@
+import { CONNECTION_STATE } from '@/src/lib/connection-state';
 import { MultipleChoice, QuestionType } from '@/src/lib/type';
 import { create } from 'zustand';
 
@@ -34,4 +35,29 @@ export const useSocketStore = create<SocketStore>((set) => ({
       allPlayers: [...state.allPlayers, playerName],
     })),
   questions: [],
+}));
+
+type GameStore = {
+  username: string;
+  setUsername: (param: string) => void;
+  gameState: any;
+  createWarning: string | undefined;
+  joinWarning: string | undefined;
+  gameConnection: CONNECTION_STATE;
+  setGameConnection: (param: CONNECTION_STATE) => void;
+};
+
+export const useGameStore = create<GameStore>((set) => ({
+  username: localStorage.username || '',
+  setUsername: (param: string) => {
+    localStorage.username = param;
+    set({ username: param });
+  },
+  gameState: undefined,
+  createWarning: undefined,
+  joinWarning: undefined,
+  gameConnection: CONNECTION_STATE.DISCONNECT,
+  setGameConnection: (param: CONNECTION_STATE) => {
+    set({ gameConnection: param });
+  },
 }));
