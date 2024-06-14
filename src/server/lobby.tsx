@@ -1,4 +1,4 @@
-import { randomInt } from 'crypto';
+import { randomInt } from '../lib/utils';
 import { GameRoom } from './game-room';
 import { GAME_PHASE } from '../lib/game-phase';
 import { useMap } from '../hook/useMap';
@@ -28,9 +28,11 @@ const getRoomByCode = (roomCode: string) => {
  * @param {GameRoom} room - The room object to be torn down.
  */
 const triggerDelayedRoomTeardown = (room: GameRoom) => {
+  if (room.roomCode == undefined) return;
+
   setTimeout(() => {
     // ensure room really is dead and hasn't already been torn down
-    if (getRoomByCode(room.roomCode) && room.isDead()) {
+    if (room.roomCode && getRoomByCode(room.roomCode) && room.isDead()) {
       teardownRoom(room);
     }
     // Check if the environment is not set to 'production', then log a cancellation message.
@@ -46,6 +48,8 @@ const triggerDelayedRoomTeardown = (room: GameRoom) => {
  * @param {GameRoom} room - The room object to be torn down.
  */
 const teardownRoom = (room: GameRoom) => {
+  if (room.roomCode == undefined) return;
+
   roomsActions.remove(room.roomCode);
   console.log(
     `Rm${room.roomCode} teardown. Last round: ${room.round}. Room count: ${rooms.size}`
@@ -56,13 +60,13 @@ const teardownRoom = (room: GameRoom) => {
  * Generates a unique room code.
  *
  * Returns a unique room code if the current number of rooms is within the limit.
- * If the limit has been reached, returns "undefined".
+ * If the limit has been reached, returns undefined.
  *
- * @returns {string} The generated room code or "undefined" if the limit has been reached.
+ * @returns {string | undefined} The generated room code or undefined if the limit has been reached.
  */
 const generateUniqueRoomCode = () => {
   if (isFull()) {
-    return 'undefined';
+    return undefined;
   }
 
   let code;
@@ -96,7 +100,12 @@ const createRoom = () => {
   if (isFull()) {
     return undefined;
   }
+
   const code = generateUniqueRoomCode();
+  if (code == undefined) {
+    return undefined;
+  }
+
   const rm: GameRoom = {
     roomCode: code,
     users: [],

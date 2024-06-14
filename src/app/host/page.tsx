@@ -1,7 +1,7 @@
 'use client';
 
 import HostIdle from '@src/components/host/HostIdle';
-import { useHostStore } from '@/store/zustand';
+import { useHostStore } from '@/store/zustand/HostStore';
 
 import React from 'react';
 import HostCreateRoom from '@/src/components/host/HostCreateRoom';

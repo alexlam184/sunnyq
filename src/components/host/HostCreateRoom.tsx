@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Button from '../ui/Button';
-import { useHostStore, useSocketStore } from '@/store/zustand';
+import { useHostStore } from '@/store/zustand/HostStore';
+import { useSocketStore } from '@/store/zustand/SocketStore';
 import { socket } from '@/src/lib/socket/socket';
 
 export default function HostCreateRoom() {

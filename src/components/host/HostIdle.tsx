@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@/src/components/ui/Button';
-import { useHostStore } from '@/store/zustand';
+import { useHostStore } from '@/store/zustand/HostStore';
 export default function HostIdle() {
   const { game, setGame } = useHostStore();
   const handleNewRoom = () => {
