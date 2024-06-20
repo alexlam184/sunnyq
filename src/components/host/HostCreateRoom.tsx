@@ -1,93 +1,76 @@
-import React, { useEffect, useState } from 'react';
+import { socket } from '@/src/lib/socket/socketio.service';
 import Button from '../ui/Button';
-import { useHostStore } from '@/store/zustand/HostStore';
-import { useSocketStore } from '@/store/zustand/SocketStore';
-import { socket } from '@/src/lib/socket/socket';
+import { usePageStateStore } from '@/store/PageStateStroe';
+import { PAGESTATE, MESSAGE } from '@/src/lib/enum';
+import { useRoomStore } from '@/store/RoomStore';
+import { useLobbyStore } from '@/store/LobbyStore';
+import { useState } from 'react';
 
-export default function HostCreateRoom() {
-  const { resetGame } = useHostStore();
-  const { username, player, addPlayer, setPlayer, allPlayers, setAllPlayers } =
-    useSocketStore();
+const HostCreateRoom = () => {
+  // use Zustand Stores
+  const { setPageState } = usePageStateStore();
+  const { setRoom } = useRoomStore();
+  const { createRoom, addRoomCode, setLobby } = useLobbyStore();
 
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [transport, setTransport] = useState('N/A');
+  const [username, setUsername] = useState('');
 
-  useEffect(() => {
-    if (socket.connected) {
-      onConnect();
-    }
-
-    function onConnect() {
-      setIsConnected(true);
-      setTransport(socket.io.engine.transport.name);
-
-      socket.io.engine.on('upgrade', (transport) => {
-        setTransport(transport.name);
+  /**
+   * Handles the creation of a new room.
+   *
+   * Emits a `FETCH_LOBBY` event to retrieve the lobby information.
+   * Creates a new room using the retrieved lobby information.
+   * Registers the host's user ID and username in the created room.
+   * Updates the local state with the newly created room and lobby.
+   *
+   */
+  const handleCreateRoom = () => {
+    socket.emit(MESSAGE.FETCH_LOBBY, (lobby: string[]) => {
+      const room = createRoom(lobby);
+      if (!room) {
+        console.error('Host: Error creating room.');
+        return;
+      }
+      // Register Host Information
+      socket.emit(MESSAGE.FETCH_USERID, (userid: string) => {
+        room.host = { userid: userid, username: username };
+        // Update Server
+        socket.emit(MESSAGE.CREATE_ROOM, {
+          roomCode: room.roomCode,
+          room: room,
+        });
       });
-    }
 
-    function onDisconnect() {
-      setIsConnected(false);
-      setTransport('N/A');
-    }
+      // Update Local
+      setRoom(room);
 
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
+      setLobby(lobby);
+      addRoomCode(room.roomCode);
 
-    socket.on('receive-message', (data) => {
-      console.log('> receive message', data);
-      addPlayer(data);
+      setPageState(PAGESTATE.inGame);
     });
+  };
 
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-    };
-  }, []);
-
-  const handleCreateGame = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    console.log('emitted');
-    socket.emit('send-message', player);
-    setPlayer('');
+  const handleBack = () => {
+    console.log('Host: back');
   };
 
   return (
-    <div className='flex flex-col justify-center'>
-      <span>Create Room</span>
-      <form className='flex flex-col' onSubmit={handleCreateGame}>
-        <input
-          type='text'
-          className='text-black'
-          name='player'
-          placeholder='enter your player'
-          value={player}
-          onChange={(e) => setPlayer(e.target.value)}
-          autoComplete={'off'}
-        ></input>
-
-        <Button name={'Create'} type={'submit'}></Button>
-        <Button name={'Back'} onclick={resetGame} />
-        <Button
-          name={'Get Player'}
-          onclick={() => {
-            console.log('get player');
-            socket.on('receive-message', (data) => {
-              console.log('Add data:', data);
-              addPlayer(data);
-            });
-          }}
-        />
-      </form>
-      <div>
-        <p>Status: {isConnected ? 'connected' : 'disconnected'}</p>
-        <p>Transport: {transport}</p>
-      </div>
-      <div>
-        {allPlayers.map((username, index) => (
-          <div key={index}>{username}</div>
-        ))}
-      </div>
+    <div className='container mx-auto px-4 py-8'>
+      <h1 className='text-2xl font-bold mb-4'>Host Create Room</h1>
+      <div className='text-2xl'>Username</div>
+      <input
+        type='text'
+        value={username}
+        onChange={(e) => {
+          setUsername(e.target.value);
+        }}
+        className='border border-gray-400 rounded px-4 py-2 text-black'
+        placeholder='Enter user name'
+      />
+      <Button name='Create Room' onclick={handleCreateRoom} type='submit' />
+      <Button name='Back' onclick={handleBack} type='submit' />
     </div>
   );
-}
+};
+
+export default HostCreateRoom;
