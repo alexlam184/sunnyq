@@ -1,7 +1,8 @@
+//testing api
 import { NextRequest, NextResponse } from 'next/server';
 
 // Inside app/api/route.ts
-// This will create end point GET http://localhost:3000/api
+// This will create end point GET http://localhost:3000/api/hello
 
 // Test this like http://localhost:3000/api/hello?name=Meera
 
