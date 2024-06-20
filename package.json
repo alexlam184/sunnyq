@@ -2,10 +2,11 @@
   "name": "sunnyq",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "node src/server/server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js",
+    "start": "NODE_ENV=production node src/server/server.js",
     "lint": "next lint",
     "prepare": "husky",
     "format": "prettier --ignore-path .gitignore --write **/*.{js,jsx,ts,tsx,json,css}",

@@ -1,24 +1,30 @@
+import { PAGESTATE } from '@/src/lib/enum';
+import { usePageStateStore } from '@/store/PageStateStroe';
 import React from 'react';
-import Button from '@/src/components/ui/Button';
-import { useHostStore } from '@/store/zustand';
-export default function HostIdle() {
-  const { game, setGame } = useHostStore();
-  const handleNewRoom = () => {
-    console.log('creating new room');
-    setGame('create');
-  };
 
-  const handleJoinRoom = () => {
-    console.log('Joining room');
-    alert('Join room');
+export default function HostIdle() {
+  const { setPageState: setGame } = usePageStateStore();
+  const handleCreateRoom = () => {
+    setGame(PAGESTATE.createRoom);
   };
+  const handleExit = () => {};
 
   return (
-    <div className='flex justify-center items-center flex-col'>
-      <span>Sunny Quiz Online</span>
-      <div className='flex flex-col '>
-        <Button name={'New Room'} onclick={handleNewRoom} />
-        <Button name={'Join Room'} onclick={handleJoinRoom} />
+    <div className='flex flex-col items-center justify-center h-screen'>
+      <h1 className='text-4xl font-bold mb-8'>Welcome to SunnyQ!</h1>
+      <div className='space-x-4'>
+        <button
+          className='bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded'
+          onClick={handleCreateRoom}
+        >
+          Create Room
+        </button>
+        <button
+          className='bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded'
+          onClick={handleExit}
+        >
+          Exit
+        </button>
       </div>
     </div>
   );
