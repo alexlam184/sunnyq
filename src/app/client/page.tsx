@@ -6,11 +6,14 @@ import { usePageStateStore } from '@/store/PageStateStroe';
 import { useLobbyStore } from '@/store/LobbyStore';
 import React, { useEffect, useState } from 'react';
 import { useRoomStore } from '@/store/RoomStore';
+import ClientRoom from '@/src/components/client/ClientRoom';
 
 const renderSwitch = (param: PAGESTATE) => {
   switch (param) {
     case PAGESTATE.front:
       return <ClientIdle />;
+    case PAGESTATE.inGame:
+      return <ClientRoom />;
     default:
       return <ClientIdle />;
   }
@@ -24,8 +27,8 @@ export default function ClientPage() {
   useEffect(() => {
     resetLobby();
 
-    //Room Fetching Event
-    socket.on(MESSAGE.FETCH_ROOM, (requestCommand, requestItem) => {
+    //Subscribe Room Fetching Event
+    socket.on(MESSAGE.FETCH_REQUEST, (requestCommand, requestItem) => {
       switch (requestCommand) {
         case 'add-user':
           addUser(requestItem);
@@ -36,6 +39,11 @@ export default function ClientPage() {
           );
       }
     });
+
+    //Unsubscribe Room Fetching Event
+    return () => {
+      socket.off(MESSAGE.FETCH_REQUEST);
+    };
   }, []);
 
   return (

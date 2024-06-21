@@ -27,7 +27,7 @@ app.prepare().then(() => {
     socket.on('disconnect', () => {
       console.log(`Server: user disconnected: ${socket.id}`);
     });
-    // TODO: Fix the bug
+
     socket.on('user:fetch-id', (callback) => {
       callback(socket.id);
       console.log(`Server: User ID ${socket.id} fetched.`);
@@ -42,6 +42,11 @@ app.prepare().then(() => {
       codetoRoomMap.set(roomCode, room);
       socket.join(roomCode); // Host join the room
       console.log(`Server: Room ${roomCode} was created.`);
+    });
+
+    socket.on('room:fetch-room', (roomCode, callback) => {
+      callback(codetoRoomMap.get(roomCode));
+      console.log(`Server: Room fetched.`);
     });
 
     socket.on('room:join-room', ({ roomCode, user }) => {

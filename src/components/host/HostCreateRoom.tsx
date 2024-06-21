@@ -38,14 +38,14 @@ const HostCreateRoom = () => {
           roomCode: room.roomCode,
           room: room,
         });
+
+        // Update Local
+        setLobby(lobby);
+        addRoomCode(room.roomCode);
+        setRoom(room);
       });
 
-      // Update Local
-      setRoom(room);
-
-      setLobby(lobby);
-      addRoomCode(room.roomCode);
-
+      // Change page
       setPageState(PAGESTATE.inGame);
     });
   };

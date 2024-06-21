@@ -1,7 +1,7 @@
 import { useRoomStore } from '@/store/RoomStore';
 
 export default function HostStart() {
-  const { getRoomCode, getUsers } = useRoomStore();
+  const { getRoomCode, getUsers, getHost } = useRoomStore();
 
   return (
     <div className='flex flex-col items-center justify-center h-screen'>
@@ -23,6 +23,9 @@ export default function HostStart() {
         >
           Delete Game
         </button>
+      </div>
+      <div className='text-4xl font-bold mb-8'>
+        {'Teacher: ' + getHost().username}
       </div>
       <div>
         <h2 className='text-4xl font-bold mb-8'>Joined Players</h2>

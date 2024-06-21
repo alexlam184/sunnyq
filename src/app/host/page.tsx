@@ -32,7 +32,7 @@ export default function HostPage() {
     resetLobby();
 
     //Subscribe Room Fetching Event
-    socket.on(MESSAGE.FETCH_ROOM, (requestCommand, requestItem) => {
+    socket.on(MESSAGE.FETCH_REQUEST, (requestCommand, requestItem) => {
       switch (requestCommand) {
         case 'add-user':
           addUser(requestItem);
@@ -46,7 +46,7 @@ export default function HostPage() {
 
     //Unsubscribe Room Fetching Event
     return () => {
-      socket.off(MESSAGE.FETCH_ROOM);
+      socket.off(MESSAGE.FETCH_REQUEST);
     };
   }, []);
 

@@ -13,7 +13,8 @@ export enum MESSAGE {
   FETCH_USERID = 'user:fetch-id',
 
   JOIN_ROOM = 'room:join-room',
-  FETCH_ROOM = 'room:fetch-request',
+  FETCH_REQUEST = 'room:fetch-request',
+  FETCH_ROOM = 'room:fetch-room',
 
   FETCH_LOBBY = 'lobby:fetch-lobby',
   CREATE_ROOM = 'lobby:host-create-room',

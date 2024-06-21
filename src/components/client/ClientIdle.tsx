@@ -1,8 +1,9 @@
 'use client';
-import { MESSAGE } from '@/src/lib/enum';
+import { MESSAGE, PAGESTATE } from '@/src/lib/enum';
 import { socket } from '@/src/lib/socket/socketio.service';
-import { User } from '@/src/lib/type';
+import { Room, User } from '@/src/lib/type';
 import { useLobbyStore } from '@/store/LobbyStore';
+import { usePageStateStore } from '@/store/PageStateStroe';
 import { useRoomStore } from '@/store/RoomStore';
 import React, { useState } from 'react';
 
@@ -11,11 +12,15 @@ export default function ClientIdle() {
   const [roomCode, setRoomCode] = useState<string>('');
 
   const { hasRoom, isFull, setLobby } = useLobbyStore();
-  const { addUser } = useRoomStore();
+  const { addUser, setRoom } = useRoomStore();
+  const { setPageState } = usePageStateStore();
 
   const handleJoinClick = () => {
     socket.emit(MESSAGE.FETCH_LOBBY, (lobby: string[]) => {
+      // Fetch Lobby
       setLobby(lobby);
+
+      // Check Room Validity
       if (!hasRoom(roomCode)) {
         console.log(`Client-Page: No such room{${roomCode}}`);
         return;
@@ -25,15 +30,23 @@ export default function ClientIdle() {
         return;
       }
 
+      // Fetch user id
       socket.emit(MESSAGE.FETCH_USERID, (userid: string) => {
         const user: User = {
           userid: userid,
           username: username,
         };
+
+        // Join Room
         socket.emit(MESSAGE.JOIN_ROOM, { roomCode: roomCode, user: user });
 
-        //Update local state
-        addUser(user);
+        // Fetch Room
+        socket.emit(MESSAGE.FETCH_ROOM, roomCode, (room: Room) => {
+          setRoom(room);
+        });
+
+        //Change Page
+        setPageState(PAGESTATE.inGame);
       });
     });
   };
