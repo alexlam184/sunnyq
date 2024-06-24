@@ -8,11 +8,10 @@ import { useRoomStore } from '@/store/RoomStore';
 import React, { useState } from 'react';
 
 export default function ClientIdle() {
-  const [username, setUsername] = useState<string>('');
   const [roomCode, setRoomCode] = useState<string>('');
 
   const { hasRoom, isFull, setLobby } = useLobbyStore();
-  const { addUser, setRoom } = useRoomStore();
+  const { setRoom, username, setUsername } = useRoomStore();
   const { setPageState } = usePageStateStore();
 
   const handleJoinClick = () => {

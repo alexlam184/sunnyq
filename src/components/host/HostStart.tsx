@@ -1,7 +1,7 @@
 import { useRoomStore } from '@/store/RoomStore';
 
 export default function HostStart() {
-  const { getRoomCode, getUsers, getHost } = useRoomStore();
+  const { getRoomCode, getUsers, getHost, getQuestion } = useRoomStore();
 
   return (
     <div className='flex flex-col items-center justify-center h-screen'>
@@ -11,6 +11,17 @@ export default function HostStart() {
         <span className='text-2xl font-bold ml-2'>{getRoomCode()}</span>
       </p>
       <div className='space-x-4'>
+        <div className='text-4xl font-bold mb-8'>
+          {'Question: ' + getQuestion().question}
+        </div>
+        <div className='text-4xl font-bold mb-8'>
+          {'Remark: ' + getQuestion().remark}
+        </div>
+        {getQuestion().choices.map((choice) => (
+          <div className='text-4xl font-bold mb-8'>
+            {String.fromCharCode(65 + choice.value) + ': ' + choice.content}
+          </div>
+        ))}
         <button
           className='bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded'
           onClick={() => {}}

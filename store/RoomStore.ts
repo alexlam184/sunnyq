@@ -1,8 +1,16 @@
 import { ROOM_PHASE } from '@src/lib/room-phase';
-import { Room, User } from '@/src/lib/type';
+import { CHOICE, MultipleChoice, Room, TextInput, User } from '@/src/lib/type';
 import { create } from 'zustand';
 
 type RoomStore = {
+  /**
+   * Get the username.
+   */
+  username: string;
+  /**
+   * Set the username.
+   */
+  setUsername: (username: string) => void;
   /**
    * Get the current room.
    */
@@ -18,7 +26,7 @@ type RoomStore = {
   /**
    * Set the current room code.
    *
-   * @param {string} roomCode - The new room code to set, or `undefined` if not provided.
+   * @param {string} roomCode - The new room code to set.
    */
   setRoomCode(roomCode: string): void;
 
@@ -29,7 +37,7 @@ type RoomStore = {
   /**
    * Set the current room phase.
    *
-   * @param {ROOM_PHASE} phase - The new room phase to set, or `undefined` if not provided.
+   * @param {ROOM_PHASE} phase - The new room phase to set.
    */
   setPhase(phase: ROOM_PHASE): void;
 
@@ -51,16 +59,52 @@ type RoomStore = {
    * @param {User} user - The user to remove.
    */
   removeUser(user: User): void;
+  /**
+   * Gets the host of the current room.
+   *
+   * @returns {User} - The current host.
+   */
   getHost: () => User;
-  setHost(host: User): void;
+  /**
+   * Sets the host of the current room.
+   *
+   * @param {User} host - The new host to set.
+   */
+  setHost: (host: User) => void;
+  /**
+   * Gets the current question in the room.
+   *
+   * @returns {MultipleChoice} - The current question.
+   */
+  getQuestion: () => MultipleChoice;
+  /**
+   * Sets the current question in the room.
+   *
+   * @param {MultipleChoice | TextInput} question - The new question to set.
+   */
+  setQuestion(question: MultipleChoice | TextInput): void;
 };
 
 export const useRoomStore = create<RoomStore>((set, get) => ({
+  username: '',
+  setUsername: (username: string) => set({ username: username }),
   room: {
     roomCode: '',
     phase: ROOM_PHASE.SETUP,
     users: [],
     host: { userid: '', username: '' },
+    question: {
+      type: 'mc',
+      question: '',
+      remark: '',
+      choices: [
+        { value: CHOICE.A, content: '' },
+        { value: CHOICE.B, content: '' },
+        { value: CHOICE.C, content: '' },
+        { value: CHOICE.D, content: '' },
+      ],
+      answer: CHOICE.A,
+    },
   },
   setRoom: (room: Room) => set({ room: room }),
   getRoomCode: () => get().room.roomCode,
@@ -90,6 +134,12 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
   setHost: (host: User) => {
     const _room = get().room;
     _room.host = host;
+    get().setRoom(_room);
+  },
+  getQuestion: () => get().room.question as MultipleChoice,
+  setQuestion: (question: MultipleChoice | TextInput) => {
+    const _room = get().room;
+    _room.question = question;
     get().setRoom(_room);
   },
 }));
