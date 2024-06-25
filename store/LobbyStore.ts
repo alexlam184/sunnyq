@@ -1,5 +1,5 @@
 import { ROOM_PHASE } from '@/src/lib/room-phase';
-import { CHOICE, QuestionType, Room, User } from '@/src/lib/type';
+import { CHOICE, QUESTION, Room, User } from '@/src/lib/type';
 import { randomInt } from '@/src/lib/utils';
 import { create } from 'zustand';
 
@@ -66,7 +66,7 @@ export const useLobbyStore = create<LobbyStore>((set, get) => ({
       users: [],
       host: { userid: '', username: '' },
       question: {
-        type: QuestionType.MultipleChoice,
+        type: QUESTION.MultipleChoice,
         question: '',
         remark: '',
       },

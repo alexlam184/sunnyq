@@ -1,4 +1,4 @@
-import { CHOICE, QuestionType } from '@/src/lib/type';
+import { CHOICE, QUESTION } from '@/src/lib/type';
 import { useRoomStore } from '@/store/RoomStore';
 
 export default function HostStart() {
@@ -19,7 +19,7 @@ export default function HostStart() {
           {'Remark: ' + getQuestion().remark}
         </div>
         <div>
-          {getQuestion().type === QuestionType.MultipleChoice
+          {getQuestion().type === QUESTION.MultipleChoice
             ? getQuestion().choices?.map((choice) => (
                 <div key={choice.value} className='text-4xl font-bold mb-8'>
                   {choice.value + ': ' + choice.content}

@@ -11,8 +11,8 @@ import { Select, Option } from '../ui/Select';
 import {
   CHOICE,
   MultipleChoiceQuestion,
-  Question,
-  QuestionType,
+  BaseQuestion,
+  QUESTION,
   TextInputQuestion,
   choice,
 } from '@/src/lib/type';
@@ -24,8 +24,8 @@ const HostCreateRoom = () => {
   const { setRoom, username, setUsername } = useRoomStore();
   const { createRoom, addRoomCode, setLobby } = useLobbyStore();
 
-  const [question, setQuestion] = useState<Question>({
-    type: QuestionType.MultipleChoice,
+  const [question, setQuestion] = useState<BaseQuestion>({
+    type: QUESTION.MultipleChoice,
     question:
       'Which of the following programming languages is primarily used for building web applications?',
     remark: '',
@@ -60,14 +60,14 @@ const HostCreateRoom = () => {
         room.host = { userid: userid, username: username };
 
         // Create a question object based on its type
-        const createQuestionObject = (): Question => {
-          if (question.type === QuestionType.MultipleChoice) {
+        const createQuestionObject = (): BaseQuestion => {
+          if (question.type === QUESTION.MultipleChoice) {
             return {
               ...question,
               choices: choices,
               answer: answer as CHOICE,
             } as MultipleChoiceQuestion;
-          } else if (question.type === QuestionType.TextInput) {
+          } else if (question.type === QUESTION.TextInput) {
             return {
               ...question,
               answer: answer as string,

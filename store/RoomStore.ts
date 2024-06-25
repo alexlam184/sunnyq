@@ -2,8 +2,8 @@ import { ROOM_PHASE } from '@src/lib/room-phase';
 import {
   CHOICE,
   MultipleChoiceQuestion,
-  Question,
-  QuestionType,
+  BaseQuestion,
+  QUESTION,
   Room,
   User,
 } from '@/src/lib/type';
@@ -81,15 +81,15 @@ type RoomStore = {
   /**
    * Gets the current question in the room.
    *
-   * @returns {Question} - The current question.
+   * @returns {BaseQuestion} - The current question.
    */
-  getQuestion: () => Question;
+  getQuestion: () => BaseQuestion;
   /**
    * Sets the current question in the room.
    *
-   * @param {Question} question - The new question to set.
+   * @param {BaseQuestion} question - The new question to set.
    */
-  setQuestion(question: Question): void;
+  setQuestion(question: BaseQuestion): void;
 };
 
 export const useRoomStore = create<RoomStore>((set, get) => ({
@@ -101,7 +101,7 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
     users: [],
     host: { userid: '', username: '' },
     question: {
-      type: QuestionType.MultipleChoice,
+      type: QUESTION.MultipleChoice,
       question: '',
       remark: '',
     },
@@ -137,7 +137,7 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
     get().setRoom(_room);
   },
   getQuestion: () => get().room.question,
-  setQuestion: (question: Question) => {
+  setQuestion: (question: BaseQuestion) => {
     const _room = get().room;
     _room.question = question;
     get().setRoom(_room);
