@@ -9,7 +9,7 @@ export interface Option {
 interface SelectProps {
   name: string;
   options: Option[];
-  onChange: (choice: Option) => void;
+  onChange?: React.ChangeEventHandler<HTMLSelectElement> | undefined;
   defaultValue?: any;
 }
 
@@ -25,9 +25,7 @@ export const Select: React.FC<SelectProps> = ({
         name={name}
         id={name}
         className='mt-1.5 w-full rounded-md border-gray-300 text-gray-700 sm:text-sm p-3 bg-slate-50'
-        onChange={(e) => {
-          onChange(options[parseInt(e.target.value)]);
-        }}
+        onChange={onChange}
         defaultValue={defaultValue}
       >
         {options.map((option) => (

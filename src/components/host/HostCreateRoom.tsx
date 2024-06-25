@@ -164,7 +164,7 @@ const HostCreateRoom = () => {
                       onChange={(e) =>
                         setChoices(
                           choices.map((c) =>
-                            c.value === choice.value
+                            c.value === nextChoice.value
                               ? { ...c, content: e.target.value }
                               : c
                           )
@@ -184,54 +184,28 @@ const HostCreateRoom = () => {
                     <TextAreaField
                       title={choice.value}
                       rows={3}
-                      onChange={() => {}}
+                      onChange={(e) =>
+                        setChoices(
+                          choices.map((c) =>
+                            c.value === choice.value
+                              ? { ...c, content: e.target.value }
+                              : c
+                          )
+                        )
+                      }
                       defaultValue={choice.content}
                     />
                   </div>
                 );
               }
             })}
-            {/*             <div className='flex space-x-1 items-center justify-center'>
-              <TextAreaField
-                title='A'
-                rows={3}
-                onChange={(e) => {}}
-                defaultValue={}
-              />
-              <TextAreaField
-                title='B'
-                rows={3}
-                onChange={(e) => {
-                  question.choices?.set(CHOICE.B, e.target.value);
-                }}
-                defaultValue={question.choices?.get(CHOICE.B)}
-              />
-            </div>
-            <div className='flex space-x-1 items-center justify-center'>
-              <TextAreaField
-                title='C'
-                rows={3}
-                onChange={(e) => {
-                  question.choices?.set(CHOICE.C, e.target.value);
-                }}
-                defaultValue={question.choices?.get(CHOICE.C)}
-              />
-              <TextAreaField
-                title='D'
-                rows={3}
-                onChange={(e) => {
-                  question.choices?.set(CHOICE.D, e.target.value);
-                }}
-                defaultValue={question.choices?.get(CHOICE.D)}
-              />
-            </div> */}
             <div className='flex items-center justify-end space-x-5'>
               <label className='text-black'>Correct Answer</label>
               <Select
                 name='MC'
                 options={options}
-                onChange={(choice: Option) => {
-                  setAnswer(choice.value);
+                onChange={(e) => {
+                  setAnswer(e.target.value);
                 }}
                 defaultValue={answer}
               />
