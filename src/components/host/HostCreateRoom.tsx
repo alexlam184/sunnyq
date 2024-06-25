@@ -16,7 +16,6 @@ import {
   TextInputQuestion,
   choice,
 } from '@/src/lib/type';
-import { copyFileSync } from 'fs';
 
 const HostCreateRoom = () => {
   // use Zustand Stores
@@ -99,6 +98,171 @@ const HostCreateRoom = () => {
     setPageState(PAGESTATE.front);
   };
 
+  const BaseQuestionField = () => {
+    return (
+      <>
+        <TextAreaField
+          title='Question'
+          rows={3}
+          onChange={(e) => {
+            setQuestion({ ...question, question: e.target.value });
+          }}
+          defaultValue={question.question}
+        />
+        <TextAreaField
+          title='Remark'
+          rows={2}
+          onChange={(e) => {
+            setQuestion({ ...question, remark: e.target.value });
+          }}
+          defaultValue={question.remark}
+        />
+      </>
+    );
+  };
+
+  const TypeChoosingField = () => {
+    return (
+      <div className='relative flex overflow-x-auto overflow-y-hidden border-gray-200 whitespace-nowrap dark:border-gray-700 justify-evenly'>
+        <div
+          className={`absolute bottom-0 h-0.5 bg-blue-500 transition-all duration-300 ease-in-out`}
+        />
+        <button
+          onClick={() =>
+            setQuestion({ ...question, type: QUESTION.MultipleChoice })
+          }
+          className={`inline-flex items-center h-10 px-4 text-sm text-center ${
+            question.type === QUESTION.MultipleChoice
+              ? 'text-blue-600 border-b-2 border-blue-500'
+              : 'text-gray-700'
+          } sm:text-base dark:text-blue-300 whitespace-nowrap focus:outline-none`}
+        >
+          {QUESTION.MultipleChoice}
+        </button>
+        <button
+          onClick={() => setQuestion({ ...question, type: QUESTION.TextInput })}
+          className={`inline-flex items-center h-10 px-4 text-sm text-center ${
+            question.type === QUESTION.TextInput
+              ? 'text-blue-600 border-b-2 border-blue-500'
+              : 'text-gray-700'
+          } sm:text-base dark:text-white whitespace-nowrap focus:outline-none`}
+        >
+          {QUESTION.TextInput}
+        </button>
+        <button
+          onClick={() => setQuestion({ ...question, type: QUESTION.OpenEnd })}
+          className={`inline-flex items-center h-10 px-4 text-sm text-center ${
+            question.type === QUESTION.OpenEnd
+              ? 'text-blue-600 border-b-2 border-blue-500'
+              : 'text-gray-700'
+          } sm:text-base dark:text-white whitespace-nowrap focus:outline-none`}
+        >
+          {QUESTION.OpenEnd}
+        </button>
+      </div>
+    );
+  };
+
+  const MultipleChoiceField = () => {
+    return (
+      <>
+        {choices.map((choice, index) => {
+          if (index % 2 === 1) return;
+          // Check if the index is even and there is a next element
+          if (index + 1 < choices.length) {
+            const nextChoice = choices[index + 1];
+            return (
+              <div
+                key={index}
+                className='flex space-x-1 items-center justify-center'
+              >
+                <TextAreaField
+                  title={choice.value}
+                  rows={3}
+                  onChange={(e) =>
+                    setChoices(
+                      choices.map((c) =>
+                        c.value === choice.value
+                          ? { ...c, content: e.target.value }
+                          : c
+                      )
+                    )
+                  }
+                  defaultValue={choice.content}
+                />
+                <TextAreaField
+                  title={nextChoice.value}
+                  rows={3}
+                  onChange={(e) =>
+                    setChoices(
+                      choices.map((c) =>
+                        c.value === nextChoice.value
+                          ? { ...c, content: e.target.value }
+                          : c
+                      )
+                    )
+                  }
+                  defaultValue={nextChoice.content}
+                />
+              </div>
+            );
+          } else {
+            // Render a single element for odd indices or when there is no next element
+            return (
+              <div
+                key={index}
+                className='flex space-x-1 items-center justify-center'
+              >
+                <TextAreaField
+                  title={choice.value}
+                  rows={3}
+                  onChange={(e) =>
+                    setChoices(
+                      choices.map((c) =>
+                        c.value === choice.value
+                          ? { ...c, content: e.target.value }
+                          : c
+                      )
+                    )
+                  }
+                  defaultValue={choice.content}
+                />
+              </div>
+            );
+          }
+        })}
+        <div className='flex items-center justify-end space-x-5'>
+          <label className='text-black'>Correct Answer</label>
+          <Select
+            name='MC'
+            options={options}
+            onChange={(e) => {
+              setAnswer(e.target.value);
+            }}
+            defaultValue={answer}
+          />
+        </div>
+      </>
+    );
+  };
+
+  const TextInputField = () => {
+    return (
+      <TextAreaField
+        title='Answer'
+        rows={3}
+        onChange={(e) => {
+          setAnswer(e.target.value);
+        }}
+        defaultValue={answer}
+      />
+    );
+  };
+
+  const OpenEndField = () => {
+    return <></>;
+  };
+
   return (
     <section className='bg-white'>
       <div className='mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-start'>
@@ -118,100 +282,18 @@ const HostCreateRoom = () => {
               }}
               defaultValue={username}
             />
-            <TextAreaField
-              title='Question'
-              rows={3}
-              onChange={(e) => {
-                setQuestion({ ...question, question: e.target.value });
-              }}
-              defaultValue={question.question}
-            />
-            <TextAreaField
-              title='Remark'
-              rows={2}
-              onChange={(e) => {
-                setQuestion({ ...question, remark: e.target.value });
-              }}
-              defaultValue={question.remark}
-            />
-            {choices.map((choice, index) => {
-              if (index % 2 === 1) return;
-              // Check if the index is even and there is a next element
-              if (index + 1 < choices.length) {
-                const nextChoice = choices[index + 1];
-                return (
-                  <div
-                    key={index}
-                    className='flex space-x-1 items-center justify-center'
-                  >
-                    <TextAreaField
-                      title={choice.value}
-                      rows={3}
-                      onChange={(e) =>
-                        setChoices(
-                          choices.map((c) =>
-                            c.value === choice.value
-                              ? { ...c, content: e.target.value }
-                              : c
-                          )
-                        )
-                      }
-                      defaultValue={choice.content}
-                    />
-                    <TextAreaField
-                      title={nextChoice.value}
-                      rows={3}
-                      onChange={(e) =>
-                        setChoices(
-                          choices.map((c) =>
-                            c.value === nextChoice.value
-                              ? { ...c, content: e.target.value }
-                              : c
-                          )
-                        )
-                      }
-                      defaultValue={nextChoice.content}
-                    />
-                  </div>
-                );
-              } else {
-                // Render a single element for odd indices or when there is no next element
-                return (
-                  <div
-                    key={index}
-                    className='flex space-x-1 items-center justify-center'
-                  >
-                    <TextAreaField
-                      title={choice.value}
-                      rows={3}
-                      onChange={(e) =>
-                        setChoices(
-                          choices.map((c) =>
-                            c.value === choice.value
-                              ? { ...c, content: e.target.value }
-                              : c
-                          )
-                        )
-                      }
-                      defaultValue={choice.content}
-                    />
-                  </div>
-                );
-              }
-            })}
-            <div className='flex items-center justify-end space-x-5'>
-              <label className='text-black'>Correct Answer</label>
-              <Select
-                name='MC'
-                options={options}
-                onChange={(e) => {
-                  setAnswer(e.target.value);
-                }}
-                defaultValue={answer}
-              />
-            </div>
+            <BaseQuestionField />
+            <TypeChoosingField />
           </div>
-
+          {question.type === QUESTION.MultipleChoice ? (
+            <MultipleChoiceField />
+          ) : question.type === QUESTION.TextInput ? (
+            <TextInputField />
+          ) : question.type === QUESTION.OpenEnd ? (
+            <OpenEndField />
+          ) : (
+            ''
+          )}
           <div className='mt-8 flex flex-wrap gap-4 justify-center'>
             <Button
               buttonText='Create'

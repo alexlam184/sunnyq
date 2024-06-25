@@ -14,8 +14,9 @@ export type User = {
 };
 
 export enum QUESTION {
-  MultipleChoice,
-  TextInput,
+  MultipleChoice = 'Multiple Choice',
+  TextInput = 'Text Input',
+  OpenEnd = 'Open End',
 }
 
 export interface BaseQuestion {
@@ -35,6 +36,10 @@ export interface MultipleChoiceQuestion extends BaseQuestion {
   type: QUESTION.MultipleChoice;
   choices: choice[];
   answer: CHOICE;
+}
+
+export interface OpenEndQuestion extends BaseQuestion {
+  type: QUESTION.OpenEnd;
 }
 
 export interface TextInputQuestion extends BaseQuestion {
