@@ -1,3 +1,4 @@
+import { CHOICE, QuestionType } from '@/src/lib/type';
 import { useRoomStore } from '@/store/RoomStore';
 
 export default function HostStart() {
@@ -17,11 +18,15 @@ export default function HostStart() {
         <div className='text-4xl font-bold mb-8'>
           {'Remark: ' + getQuestion().remark}
         </div>
-        {getQuestion().choices.map((choice) => (
-          <div className='text-4xl font-bold mb-8'>
-            {String.fromCharCode(65 + choice.value) + ': ' + choice.content}
-          </div>
-        ))}
+        <div>
+          {getQuestion().type === QuestionType.MultipleChoice
+            ? getQuestion().choices?.map((choice) => (
+                <div key={choice.value} className='text-4xl font-bold mb-8'>
+                  {choice.value + ': ' + choice.content}
+                </div>
+              ))
+            : ''}
+        </div>
         <button
           className='bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded'
           onClick={() => {}}

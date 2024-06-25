@@ -1,5 +1,12 @@
 import { ROOM_PHASE } from '@src/lib/room-phase';
-import { CHOICE, MultipleChoice, Room, TextInput, User } from '@/src/lib/type';
+import {
+  CHOICE,
+  MultipleChoiceQuestion,
+  Question,
+  QuestionType,
+  Room,
+  User,
+} from '@/src/lib/type';
 import { create } from 'zustand';
 
 type RoomStore = {
@@ -74,15 +81,15 @@ type RoomStore = {
   /**
    * Gets the current question in the room.
    *
-   * @returns {MultipleChoice} - The current question.
+   * @returns {Question} - The current question.
    */
-  getQuestion: () => MultipleChoice;
+  getQuestion: () => Question;
   /**
    * Sets the current question in the room.
    *
-   * @param {MultipleChoice | TextInput} question - The new question to set.
+   * @param {Question} question - The new question to set.
    */
-  setQuestion(question: MultipleChoice | TextInput): void;
+  setQuestion(question: Question): void;
 };
 
 export const useRoomStore = create<RoomStore>((set, get) => ({
@@ -94,16 +101,9 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
     users: [],
     host: { userid: '', username: '' },
     question: {
-      type: 'mc',
+      type: QuestionType.MultipleChoice,
       question: '',
       remark: '',
-      choices: [
-        { value: CHOICE.A, content: '' },
-        { value: CHOICE.B, content: '' },
-        { value: CHOICE.C, content: '' },
-        { value: CHOICE.D, content: '' },
-      ],
-      answer: CHOICE.A,
     },
   },
   setRoom: (room: Room) => set({ room: room }),
@@ -136,8 +136,8 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
     _room.host = host;
     get().setRoom(_room);
   },
-  getQuestion: () => get().room.question as MultipleChoice,
-  setQuestion: (question: MultipleChoice | TextInput) => {
+  getQuestion: () => get().room.question,
+  setQuestion: (question: Question) => {
     const _room = get().room;
     _room.question = question;
     get().setRoom(_room);

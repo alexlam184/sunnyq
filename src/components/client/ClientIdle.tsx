@@ -6,6 +6,8 @@ import { useLobbyStore } from '@/store/LobbyStore';
 import { usePageStateStore } from '@/store/PageStateStroe';
 import { useRoomStore } from '@/store/RoomStore';
 import React, { useState } from 'react';
+import Button from '../ui/Button';
+import InputField from '../ui/InputField';
 
 export default function ClientIdle() {
   const [roomCode, setRoomCode] = useState<string>('');
@@ -42,15 +44,39 @@ export default function ClientIdle() {
         // Fetch Room
         socket.emit(MESSAGE.FETCH_ROOM, roomCode, (room: Room) => {
           setRoom(room);
+          //Change Page
+          setPageState(PAGESTATE.inGame);
         });
-
-        //Change Page
-        setPageState(PAGESTATE.inGame);
       });
     });
   };
 
   return (
+    /*     <section className='bg-white'>
+      <div className='mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center'>
+        <div className='mx-auto max-w-xl text-center'>
+          <h1 className='text-3xl font-extrabold sm:text-5xl text-black'>
+            Welcome to SunnyQ!
+          </h1>
+
+          <p className='mt-4 sm:text-xl/relaxed text-black'>
+            Teacher and Students can enjoy the fun of learning together.
+          </p>
+          <div className='mt-8 flex flex-wrap justify-center gap-4'>
+            <Button
+              buttonText='Join Room'
+              onClick={() => {}}
+              buttonType='base'
+            />
+            <Button
+              buttonText='Learn More'
+              onClick={() => {}}
+              buttonType='border'
+            />
+          </div>
+        </div>
+      </div>
+    </section> */
     <div className='flex flex-col items-center justify-center h-screen'>
       <h1 className='text-4xl font-bold mb-8'>Join the Room</h1>
       <div className='text-2xl'>Username</div>

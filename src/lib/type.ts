@@ -5,7 +5,7 @@ export type Room = {
   phase: ROOM_PHASE;
   host: User;
   users: User[];
-  question: MultipleChoice | TextInput;
+  question: Question;
 };
 
 export type User = {
@@ -13,30 +13,38 @@ export type User = {
   username: string;
 };
 
-export type QuestionType = {
-  question: string;
-  remark?: string;
-};
-
-export enum CHOICE {
-  A = 0,
-  B,
-  C,
-  D,
+export enum QuestionType {
+  MultipleChoice,
+  TextInput,
 }
 
-export type choiceType = {
+export interface Question {
+  type: QuestionType;
+  question: string;
+  remark?: string;
+  choices?: any[]; // Only used in Multiple Questions
+  answer?: any;
+}
+
+export type choice = {
   value: CHOICE;
   content: string;
 };
 
-export interface MultipleChoice extends QuestionType {
-  type: 'mc';
-  choices: choiceType[];
+export interface MultipleChoiceQuestion extends Question {
+  type: QuestionType.MultipleChoice;
+  choices: choice[];
   answer: CHOICE;
 }
 
-export interface TextInput extends QuestionType {
-  type: 'input';
+export interface TextInputQuestion extends Question {
+  type: QuestionType.TextInput;
   answer: string;
+}
+
+export enum CHOICE {
+  A = 'A',
+  B = 'B',
+  C = 'C',
+  D = 'D',
 }

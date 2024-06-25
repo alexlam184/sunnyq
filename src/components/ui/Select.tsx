@@ -10,14 +10,14 @@ interface SelectProps {
   name: string;
   options: Option[];
   onChange: (choice: Option) => void;
-  value?: any;
+  defaultValue?: any;
 }
 
 export const Select: React.FC<SelectProps> = ({
   name,
   options,
   onChange,
-  value,
+  defaultValue,
 }) => {
   return (
     <div>
@@ -28,7 +28,7 @@ export const Select: React.FC<SelectProps> = ({
         onChange={(e) => {
           onChange(options[parseInt(e.target.value)]);
         }}
-        value={value}
+        defaultValue={defaultValue}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
