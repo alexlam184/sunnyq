@@ -239,7 +239,7 @@ const HostCreateRoom = () => {
   };
 
   return (
-    <section className='bg-white'>
+    <section className='bg-slate-100'>
       <div className='mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-start'>
         <div className='mx-auto max-w-xl'>
           <h1 className='text-3xl font-extrabold sm:text-5xl text-black'>
@@ -266,9 +266,7 @@ const HostCreateRoom = () => {
             <TextInputField />
           ) : question.type === QUESTION.OpenEnd ? (
             <OpenEndField />
-          ) : (
-            ''
-          )}
+          ) : null}
           <div className='mt-8 flex flex-wrap gap-4 justify-center'>
             <Button
               buttonText='Create'

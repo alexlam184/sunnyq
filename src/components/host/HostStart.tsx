@@ -5,7 +5,7 @@ export default function HostStart() {
   const { getRoomCode, getUsers, getHost, getQuestion } = useRoomStore();
 
   return (
-    <div className='flex flex-col items-center justify-center h-screen'>
+    <div className='flex flex-col items-center justify-center h-screen bg-slate-100'>
       <h1 className='text-4xl font-bold mb-8'>Join the Room</h1>
       <p className='text-2xl mb-4'>
         Code:

@@ -4,13 +4,13 @@ import React from 'react';
 import Button from '../ui/Button';
 
 export default function HostIdle() {
-  const { setPageState: setGame } = usePageStateStore();
+  const { setPageState } = usePageStateStore();
   const handleCreateRoom = () => {
-    setGame(PAGESTATE.createRoom);
+    setPageState(PAGESTATE.createRoom);
   };
 
   return (
-    <section className='bg-white'>
+    <section className='bg-slate-100'>
       <div className='mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center'>
         <div className='mx-auto max-w-xl text-center'>
           <h1 className='text-3xl font-extrabold sm:text-5xl text-black'>

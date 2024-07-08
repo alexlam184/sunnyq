@@ -8,6 +8,7 @@ import { useRoomStore } from '@/store/RoomStore';
 import React, { useState } from 'react';
 import Button from '../ui/Button';
 import InputField from '../ui/InputField';
+import AttentionAlert from '../ui/AttentionAlert';
 
 export default function ClientIdle() {
   const [roomCode, setRoomCode] = useState<string>('');
@@ -52,20 +53,39 @@ export default function ClientIdle() {
   };
 
   return (
-    /*     <section className='bg-white'>
+    <section className='bg-slate-100'>
       <div className='mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center'>
-        <div className='mx-auto max-w-xl text-center'>
+        <div className='mx-auto max-w-xl text-center space-y-3'>
           <h1 className='text-3xl font-extrabold sm:text-5xl text-black'>
             Welcome to SunnyQ!
           </h1>
-
           <p className='mt-4 sm:text-xl/relaxed text-black'>
             Teacher and Students can enjoy the fun of learning together.
           </p>
+          <div className='flex items-center justify-center'>
+            <InputField
+              type='text'
+              title='username'
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
+            />
+          </div>
+          <div className='flex items-center justify-center'>
+            <InputField
+              type='text'
+              title='room code'
+              onChange={(e) => {
+                setRoomCode(e.target.value);
+              }}
+            />
+          </div>
           <div className='mt-8 flex flex-wrap justify-center gap-4'>
             <Button
               buttonText='Join Room'
-              onClick={() => {}}
+              onClick={() => {
+                handleJoinClick();
+              }}
               buttonType='base'
             />
             <Button
@@ -76,35 +96,6 @@ export default function ClientIdle() {
           </div>
         </div>
       </div>
-    </section> */
-    <div className='flex flex-col items-center justify-center h-screen'>
-      <h1 className='text-4xl font-bold mb-8'>Join the Room</h1>
-      <div className='text-2xl'>Username</div>
-      <input
-        type='text'
-        value={username}
-        onChange={(e) => {
-          setUsername(e.target.value);
-        }}
-        className='border border-gray-400 rounded px-4 py-2 text-black'
-        placeholder='Enter user name'
-      />
-      <div className='text-2xl'>Room Code</div>
-      <input
-        type='text'
-        value={roomCode}
-        onChange={(e) => {
-          setRoomCode(e.target.value);
-        }}
-        className='border border-gray-400 rounded px-4 py-2 text-black'
-        placeholder='Enter room code'
-      />
-      <button
-        className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded'
-        onClick={handleJoinClick}
-      >
-        Join
-      </button>
-    </div>
+    </section>
   );
 }
