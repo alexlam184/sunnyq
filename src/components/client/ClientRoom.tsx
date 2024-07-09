@@ -25,7 +25,9 @@ export default function ClientIdle() {
       return;
     }
     const roomCode: string = getRoomCode();
-    socket.emit(MESSAGE.SUBMIT_ANSWER, { roomCode, userid, selectedChoice });
+
+    const answer: string = selectedChoice; // socket IO can only receive string
+    socket.emit(MESSAGE.SUBMIT_ANSWER, { roomCode, userid, answer });
     setSubmitted(true);
     setReminded(false);
   };
