@@ -2,7 +2,7 @@ import { QUESTION } from '@/src/lib/type';
 import { useRoomStore } from '@/store/RoomStore';
 import Button from '../ui/Button';
 
-export default function HostStart() {
+export default function HostRoom() {
   const { getRoomCode, getUsers, getHost, getQuestion, room } = useRoomStore();
 
   return (
@@ -24,9 +24,15 @@ export default function HostStart() {
         </div>
 
         <div className='bg-white rounded-lg shadow-lg p-6 flex-grow'>
-          <h2 className='text-2xl font-bold mb-4 text-blue-600'>
-            Joined Players
-          </h2>
+          <div className=' w-full flex justify-between'>
+            <h2 className='text-2xl font-bold mb-4 text-blue-600'>
+              Joined Players
+            </h2>
+            <span className=' font-bold text-2xl'>
+              {room.num_of_answered + '/' + room.num_of_students}
+            </span>
+          </div>
+
           {getUsers().length > 0 ? (
             <ul className='space-y-2'>
               {getUsers().map((user, index) => (
@@ -83,7 +89,6 @@ export default function HostStart() {
         <h1 className='text-4xl font-bold mb-6 text-center text-blue-600'>
           Statistics
         </h1>
-        <span>{room.num_of_answered + '/' + room.num_of_students}</span>
       </div>
     </div>
   );

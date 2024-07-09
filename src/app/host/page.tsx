@@ -4,7 +4,7 @@ import HostIdle from '@src/components/host/HostIdle';
 import React, { use, useEffect } from 'react';
 import HostCreateRoom from '@/src/components/host/HostCreateRoom';
 import { PAGESTATE, MESSAGE } from '@/src/lib/enum';
-import HostStart from '@/src/components/host/HostStart';
+import HostRoom from '@/src/components/host/HostRoom';
 import { usePageStateStore } from '@/store/PageStateStroe';
 import { socket } from '@/src/lib/socket/socketio.service';
 import { useLobbyStore } from '@/store/LobbyStore';
@@ -17,7 +17,7 @@ const renderSwitch = (param: PAGESTATE) => {
     case PAGESTATE.createRoom:
       return <HostCreateRoom />;
     case PAGESTATE.inGame:
-      return <HostStart />;
+      return <HostRoom />;
     default:
       return <HostIdle />;
   }
