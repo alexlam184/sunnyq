@@ -26,11 +26,13 @@ export default function HostIdle() {
               buttonText='Create Room'
               onClick={handleCreateRoom}
               buttonType='base'
+              themeColor='blue'
             />
             <Button
               buttonText='Learn More'
               onClick={() => {}}
               buttonType='border'
+              themeColor='blue'
             />
           </div>
         </div>

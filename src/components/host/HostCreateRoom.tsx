@@ -272,11 +272,13 @@ const HostCreateRoom = () => {
               buttonText='Create'
               onClick={handleCreateRoom}
               buttonType='base'
+              themeColor='blue'
             />
             <Button
               buttonText='Back'
               onClick={handleBack}
               buttonType='border'
+              themeColor='blue'
             />
           </div>
         </div>

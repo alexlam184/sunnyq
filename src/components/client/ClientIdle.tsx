@@ -87,11 +87,13 @@ export default function ClientIdle() {
                 handleJoinClick();
               }}
               buttonType='base'
+              themeColor='green'
             />
             <Button
               buttonText='Learn More'
               onClick={() => {}}
               buttonType='border'
+              themeColor='green'
             />
           </div>
         </div>
