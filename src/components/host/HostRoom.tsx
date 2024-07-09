@@ -134,7 +134,7 @@ export default function HostRoom() {
           </h2>
         </div>
         <div>
-          <h2 className='text-2xl font-semibold mb-4 text-center text-gray-700 underline'>
+          <h2 className='text-2xl font-bold mb-4 text-center text-gray-700 underline'>
             Bar Chart
           </h2>
           <ResponsiveContainer width='100%' height={300}>
