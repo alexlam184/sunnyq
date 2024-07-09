@@ -22,7 +22,7 @@ const renderSwitch = (param: PAGESTATE) => {
 export default function ClientPage() {
   const { pageState } = usePageStateStore();
   const { resetLobby } = useLobbyStore();
-  const { addUser } = useRoomStore();
+  const { addUser, setRoom } = useRoomStore();
 
   useEffect(() => {
     resetLobby();
@@ -32,6 +32,9 @@ export default function ClientPage() {
       switch (requestCommand) {
         case 'add-user':
           addUser(requestItem);
+          break;
+        case 'fetch-room':
+          setRoom(requestItem);
           break;
         default:
           console.log(

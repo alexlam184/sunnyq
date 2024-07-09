@@ -14,7 +14,7 @@ export default function ClientIdle() {
   const [roomCode, setRoomCode] = useState<string>('');
 
   const { hasRoom, isFull, setLobby } = useLobbyStore();
-  const { setRoom, username, setUsername } = useRoomStore();
+  const { setRoom, username, setUsername, setUserID } = useRoomStore();
   const { setPageState } = usePageStateStore();
 
   const handleJoinClick = () => {
@@ -38,6 +38,7 @@ export default function ClientIdle() {
           userid: userid,
           username: username,
         };
+        setUserID(userid);
 
         // Join Room
         socket.emit(MESSAGE.JOIN_ROOM, { roomCode: roomCode, user: user });

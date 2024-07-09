@@ -26,7 +26,7 @@ const renderSwitch = (param: PAGESTATE) => {
 export default function HostPage() {
   const { pageState } = usePageStateStore();
   const { resetLobby } = useLobbyStore();
-  const { addUser } = useRoomStore();
+  const { addUser, setRoom } = useRoomStore();
 
   useEffect(() => {
     resetLobby();
@@ -36,6 +36,9 @@ export default function HostPage() {
       switch (requestCommand) {
         case 'add-user':
           addUser(requestItem);
+          break;
+        case 'fetch-room':
+          setRoom(requestItem);
           break;
         default:
           console.log(

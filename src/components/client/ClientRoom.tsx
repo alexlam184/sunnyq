@@ -3,9 +3,12 @@ import { choice, CHOICE, QUESTION } from '@/src/lib/type';
 import { useRoomStore } from '@/store/RoomStore';
 import { useState } from 'react';
 import Button from '../ui/Button';
+import { socket } from '@/src/lib/socket/socketio.service';
+import { MESSAGE } from '@/src/lib/enum';
 
 export default function ClientIdle() {
-  const { getHost, getUsers, getQuestion, username } = useRoomStore();
+  const { getHost, getUsers, getQuestion, username, getRoomCode, userid } =
+    useRoomStore();
   const [selectedChoice, setSelectedChoice] = useState<CHOICE | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
 
@@ -16,6 +19,8 @@ export default function ClientIdle() {
 
   const handleSubmit = () => {
     if (submitted) return;
+    const roomCode: string = getRoomCode();
+    socket.emit(MESSAGE.SUBMIT_ANSWER, { roomCode, userid, selectedChoice });
     setSubmitted(true);
   };
 

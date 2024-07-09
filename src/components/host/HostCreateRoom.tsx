@@ -29,7 +29,7 @@ const HostCreateRoom = () => {
     type: QUESTION.MultipleChoice,
     question:
       'Which of the following programming languages is primarily used for building web applications?',
-    remark: '',
+    remark: 'Java is not the same as JavaScript.',
   });
 
   const [choices, updateChoices] = useImmer<choice[]>([

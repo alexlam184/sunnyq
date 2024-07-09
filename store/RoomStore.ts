@@ -15,9 +15,17 @@ type RoomStore = {
    */
   username: string;
   /**
+   * Get the userid.
+   */
+  userid: string;
+  /**
    * Set the username.
    */
   setUsername: (username: string) => void;
+  /**
+   * Set the userid.
+   */
+  setUserID: (userid: string) => void;
   /**
    * Get the current room.
    */
@@ -94,7 +102,9 @@ type RoomStore = {
 
 export const useRoomStore = create<RoomStore>((set, get) => ({
   username: '',
+  userid: '',
   setUsername: (username: string) => set({ username: username }),
+  setUserID: (userid: string) => set({ userid: userid }),
   room: {
     roomCode: '',
     phase: ROOM_PHASE.SETUP,
@@ -105,6 +115,8 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
       question: '',
       remark: '',
     },
+    num_of_students: 0,
+    num_of_answered: 0,
   },
   setRoom: (room: Room) => set({ room: room }),
   getRoomCode: () => get().room.roomCode,

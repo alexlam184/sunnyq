@@ -70,6 +70,8 @@ export const useLobbyStore = create<LobbyStore>((set, get) => ({
         question: '',
         remark: '',
       },
+      num_of_students: 0,
+      num_of_answered: 0,
     };
 
     console.log(`Lobby: Room: ${room.roomCode} is created.`);

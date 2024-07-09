@@ -3,7 +3,7 @@ import { useRoomStore } from '@/store/RoomStore';
 import Button from '../ui/Button';
 
 export default function HostStart() {
-  const { getRoomCode, getUsers, getHost, getQuestion } = useRoomStore();
+  const { getRoomCode, getUsers, getHost, getQuestion, room } = useRoomStore();
 
   return (
     <div className='flex min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 text-gray-800 p-8 flex-col md:flex-row'>
@@ -83,6 +83,7 @@ export default function HostStart() {
         <h1 className='text-4xl font-bold mb-6 text-center text-blue-600'>
           Statistics
         </h1>
+        <span>{room.num_of_answered + '/' + room.num_of_students}</span>
       </div>
     </div>
   );

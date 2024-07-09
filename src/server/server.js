@@ -57,17 +57,47 @@ app.prepare().then(() => {
       // Join socketIO room
       socket.join(roomCode);
 
-      // Update Map
-      codetoRoomMap.get(roomCode).users.push(user);
+      // Get room
+      const room = codetoRoomMap.get(roomCode);
+
+      // Update Room
+      room.users.push(user);
+      room.num_of_students++;
 
       // Fetch other users in the room
-      socket.to(roomCode).emit('room:fetch-request', 'add-user', user);
+      // use fetching room right now
+      // socket.to(roomCode).emit('room:fetch-request', 'add-user', user);
+      socket.to(roomCode).emit('room:fetch-request', 'fetch-room', room);
 
       console.log(`Server: user ${socket.id} has joined room ${roomCode}`);
     });
+
     socket.on('room:leave-room', ({ roomCode }) => {
       socket.leave(roomCode);
       console.log(`Server: user ${socket.id} left room ${roomCode}`);
+    });
+
+    socket.on('room:submit-answer', ({ roomCode, userid, answer }) => {
+      if (!codetoRoomMap.has(roomCode)) {
+        console.log(`Room doesn't exist`);
+        return;
+      }
+      // Get room
+      const room = codetoRoomMap.get(roomCode);
+
+      // Get user
+      const user = room.users.find((user) => userid == user.userid);
+      if (!user) {
+        console.log(`Player doesn't exist`);
+        return;
+      }
+
+      // Update room
+      user.answer = answer;
+      room.num_of_answered++;
+
+      // Fetch other users in the room
+      socket.to(roomCode).emit('room:fetch-request', 'fetch-room', room);
     });
   });
 

@@ -6,11 +6,14 @@ export type Room = {
   host: User;
   users: User[];
   question: BaseQuestion;
+  num_of_students: number;
+  num_of_answered: number;
 };
 
 export type User = {
   userid: string;
   username: string;
+  answer?: any;
 };
 
 export enum QUESTION {
