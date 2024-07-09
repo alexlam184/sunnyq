@@ -29,7 +29,8 @@ const HostCreateRoom = () => {
     type: QUESTION.MultipleChoice,
     question:
       'Which of the following programming languages is primarily used for building web applications?',
-    remark: 'Java is not the same as JavaScript.',
+    remark:
+      "Remember the acronym 'JS' which stands for JavaScript, as it is the go-to language for web application development due to its versatility and widespread support in browsers.",
   });
 
   const [choices, updateChoices] = useImmer<choice[]>([

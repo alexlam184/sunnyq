@@ -55,7 +55,7 @@ export default function HostRoom() {
         <div className='bg-gray-100 p-6 rounded-lg flex-grow'>
           <h2 className='text-2xl font-bold mb-4 text-blue-600'>Question</h2>
           <p className='text-xl mb-2'>{getQuestion().question}</p>
-          <p className='text-lg text-gray-600 mb-4'>{getQuestion().remark}</p>
+          <p className='text-sm text-gray-500 mb-4'>{getQuestion().remark}</p>
 
           {getQuestion().type === QUESTION.MultipleChoice && (
             <div className='space-y-4'>

@@ -11,6 +11,7 @@ export default function ClientIdle() {
     useRoomStore();
   const [selectedChoice, setSelectedChoice] = useState<CHOICE | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [reminded, setReminded] = useState<boolean>(false);
 
   const handleChoiceSelect = (choice: CHOICE) => {
     if (submitted) return;
@@ -19,9 +20,14 @@ export default function ClientIdle() {
 
   const handleSubmit = () => {
     if (submitted) return;
+    if (!selectedChoice) {
+      setReminded(true);
+      return;
+    }
     const roomCode: string = getRoomCode();
     socket.emit(MESSAGE.SUBMIT_ANSWER, { roomCode, userid, selectedChoice });
     setSubmitted(true);
+    setReminded(false);
   };
 
   return (
@@ -66,7 +72,7 @@ export default function ClientIdle() {
         <div className='bg-gray-100 p-6 rounded-lg flex-grow'>
           <h2 className='text-2xl font-bold mb-4 text-green-600'>Question</h2>
           <p className='text-xl mb-2'>{getQuestion().question}</p>
-          <p className='text-lg text-gray-600 mb-4'>{getQuestion().remark}</p>
+          <p className='text-sm text-gray-500 mb-4'>{getQuestion().remark}</p>
 
           {getQuestion().type === QUESTION.MultipleChoice && (
             <div className='space-y-4'>
@@ -100,6 +106,13 @@ export default function ClientIdle() {
               </span>
             )}
           </div>
+          {reminded && (
+            <div className='flex justify-end space-x-4 mt-8'>
+              <span className='text-green-700'>
+                Please answer the question before the submission.
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
