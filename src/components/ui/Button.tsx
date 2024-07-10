@@ -4,7 +4,7 @@ interface ButtonProps {
   buttonText: string;
   onClick: () => void;
   buttonType: 'base' | 'border';
-  themeColor: 'blue' | 'green';
+  themeColor: 'blue' | 'green' | 'red';
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -16,15 +16,20 @@ const Button: React.FC<ButtonProps> = ({
   const baseBackColorVariant = {
     blue: 'border-blue-600 group-active:border-blue-500',
     green: 'border-green-600 group-active:border-green-500',
+    red: 'border-red-600 group-active:border-red-500',
   };
+
   const baseFrontColorVariant = {
     blue: 'border-blue-600 bg-blue-600 active:border-blue-500 active:bg-blue-500',
     green:
       'border-green-600 bg-green-600 active:border-green-500 active:bg-green-500',
+    red: 'border-red-600 bg-red-600 active:border-red-500 active:bg-red-500',
   };
+
   const borderColorVariant = {
     blue: 'text-blue-600 active:text-blue-500',
     green: 'text-green-600 active:text-green-500',
+    red: 'text-red-600 active:text-red-500',
   };
   return buttonType === 'base' ? (
     <a

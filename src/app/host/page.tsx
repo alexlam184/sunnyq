@@ -1,7 +1,7 @@
 'use client';
 
 import HostIdle from '@src/components/host/HostIdle';
-import React, { use, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import HostCreateRoom from '@/src/components/host/HostCreateRoom';
 import { PAGESTATE, MESSAGE } from '@/src/lib/enum';
 import HostRoom from '@/src/components/host/HostRoom';

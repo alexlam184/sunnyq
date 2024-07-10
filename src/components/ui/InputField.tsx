@@ -4,7 +4,7 @@ interface InputProps {
   type: string;
   title: string;
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
-  defaultValue?: string | '';
+  defaultValue?: string | number | '';
 }
 
 const InputField: React.FC<InputProps> = ({

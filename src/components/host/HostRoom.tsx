@@ -71,18 +71,19 @@ export default function HostRoom() {
               {room.num_of_answered + '/' + room.num_of_students}
             </span>
           </div>
-
-          {getUsers().length > 0 ? (
-            <ul className='space-y-2'>
-              {getUsers().map((user, index) => (
-                <li className='text-lg' key={index}>
-                  {index + 1}. {user.username}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className='text-lg text-gray-600'>No users yet!</p>
-          )}
+          <div className='scroll-container overflow-y-auto max-h-[65vh]'>
+            {getUsers().length > 0 ? (
+              <ul className='space-y-2'>
+                {getUsers().map((user, index) => (
+                  <li className='text-lg' key={index}>
+                    {index + 1}. {user.username}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className='text-lg text-gray-600'>No users yet!</p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -130,7 +131,7 @@ export default function HostRoom() {
         </h1>
         <div>
           <h2 className='text-2xl font-bold mb-4 text-center text-gray-700'>
-            Accuracy: {accuracy}%
+            Accuracy: {accuracy.toFixed(1)}%
           </h2>
         </div>
         <div>
