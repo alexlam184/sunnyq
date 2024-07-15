@@ -7,7 +7,7 @@ import { useMemo, useState, useCallback } from 'react';
 import InputField from '../ui/InputField';
 import Button from '../ui/Button';
 import TextAreaField from '../ui/TextAreaField';
-import { Select, Option } from '../ui/Select';
+import { Select, SelectOption } from '../ui/Select';
 import {
   CHOICE,
   MultipleChoiceQuestion,
@@ -18,6 +18,7 @@ import {
   OpenEndQuestion,
 } from '@/src/lib/type';
 import { useImmer } from 'use-immer';
+import Tabs, { TabOption } from '../ui/Tabs';
 
 const HostCreateRoom = () => {
   // use Zustand Stores
@@ -43,14 +44,7 @@ const HostCreateRoom = () => {
   const [choiceAnswer, setChoiceAnswer] = useState<CHOICE>(CHOICE.C);
   const [textAnswer, setTextAnswer] = useState<string>('JavaScript');
 
-  const QUESTION_Array = useMemo(() => {
-    return (Object.keys(QUESTION) as (keyof typeof QUESTION)[]).map((key) => {
-      console.log(key);
-      return QUESTION[key];
-    });
-  }, []);
-
-  const options: Option[] = useMemo(() => {
+  const selectedOptions: SelectOption[] = useMemo(() => {
     return [
       { value: CHOICE.A, label: 'A' },
       { value: CHOICE.B, label: 'B' },
@@ -142,30 +136,25 @@ const HostCreateRoom = () => {
     );
   }, []);
 
+  const tabOptions: TabOption[] = useMemo(() => {
+    return [
+      { value: QUESTION.MultipleChoice, label: QUESTION.MultipleChoice },
+      { value: QUESTION.TextInput, label: QUESTION.TextInput },
+      { value: QUESTION.OpenEnd, label: QUESTION.OpenEnd },
+    ];
+  }, []);
+
   const TypeChoosingField = useCallback(() => {
     return (
-      <div className='relative flex overflow-x-auto overflow-y-hidden border-gray-200 whitespace-nowrap dark:border-gray-700 justify-evenly'>
-        <div
-          className={`absolute bottom-0 h-0.5 bg-blue-500 transition-all duration-300 ease-in-out`}
-        />
-        {QUESTION_Array.map((questionType: QUESTION, index) => (
-          <button
-            key={index}
-            onClick={() =>
-              updateQuestion((draft) => {
-                draft.type = questionType;
-              })
-            }
-            className={`inline-flex items-center h-10 px-4 text-sm text-center ${
-              question.type === questionType
-                ? 'text-blue-600 border-b-2 border-blue-500'
-                : 'text-gray-700'
-            } sm:text-base dark:text-blue-300 whitespace-nowrap focus:outline-none`}
-          >
-            {questionType}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        options={tabOptions}
+        onChange={(option) => {
+          updateQuestion((draft) => {
+            draft.type = option.value;
+          });
+        }}
+        defaultValue={question.type}
+      />
     );
   }, [question.type]);
 
@@ -211,7 +200,7 @@ const HostCreateRoom = () => {
           <label className='text-black'>Correct Answer</label>
           <Select
             name='MC'
-            options={options}
+            options={selectedOptions}
             onChange={(e) => {
               setChoiceAnswer(e.target.value as CHOICE);
             }}
@@ -236,7 +225,7 @@ const HostCreateRoom = () => {
   }, []);
 
   const OpenEndField = () => {
-    return <></>;
+    return null;
   };
 
   return (

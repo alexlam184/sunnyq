@@ -1,14 +1,13 @@
-import { CHOICE } from '@/src/lib/type';
 import React from 'react';
 
-export interface Option {
+export interface SelectOption {
   label: string;
   value: any;
 }
 
 interface SelectProps {
   name: string;
-  options: Option[];
+  options: SelectOption[];
   onChange?: React.ChangeEventHandler<HTMLSelectElement> | undefined;
   defaultValue?: any;
 }
