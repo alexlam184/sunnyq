@@ -55,7 +55,7 @@ export default function ClientIdle() {
 
   return (
     <section className='bg-slate-100'>
-      <div className='mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center'>
+      <div className='min-h-screen px-4 py-64 lg:py-32 lg:flex lg:h-screen items-center justify-center'>
         <div className='mx-auto max-w-xl text-center space-y-3'>
           <h1 className='text-3xl font-extrabold sm:text-5xl text-black'>
             Welcome to SunnyQ!

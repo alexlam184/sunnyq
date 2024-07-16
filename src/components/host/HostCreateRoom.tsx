@@ -230,7 +230,7 @@ const HostCreateRoom = () => {
 
   return (
     <section className='bg-slate-100'>
-      <div className='mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-start'>
+      <div className='min-h-screen mx-auto max-w-screen-xl px-4 py-10 lg:py-32 lg:flex lg:items-start'>
         <div className='mx-auto max-w-xl'>
           <h1 className='text-3xl font-extrabold sm:text-5xl text-black'>
             Room Creator 🦑

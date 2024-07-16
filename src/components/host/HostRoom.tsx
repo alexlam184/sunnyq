@@ -222,7 +222,7 @@ export default function HostRoom() {
 
   return (
     <div className='flex min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 text-gray-800 p-8 flex-col md:flex-row'>
-      <div className='w-full md:w-80 flex flex-col order-2 md:order-1'>
+      <div className='w-full md:w-80 flex flex-col order-1'>
         {/* Info Field */}
         <div className='bg-white rounded-lg shadow-lg p-6 mb-8 flex-none'>
           <h2 className='text-2xl font-bold mb-4 text-black'>
@@ -240,7 +240,7 @@ export default function HostRoom() {
         </div>
 
         {/* Player List Field */}
-        <div className='bg-white rounded-lg shadow-lg p-6 flex-grow'>
+        <div className='bg-white rounded-lg shadow-lg p-6 flex-grow mb-8 lg:mb-0'>
           <div className='w-full flex justify-between items-center mb-4'>
             <h2 className='text-2xl font-bold text-blue-600'>Joined Players</h2>
             <span className='font-bold text-2xl px-2 bg-blue-100 text-blue-700 rounded-lg'>

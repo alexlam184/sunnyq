@@ -37,7 +37,7 @@ export default function ClientRoom() {
 
   return (
     <div className='flex min-h-screen bg-gradient-to-b from-green-100 to-green-200 text-gray-800 p-8 flex-col md:flex-row'>
-      <div className='w-full md:w-80 flex flex-col order-2 md:order-1'>
+      <div className='w-full md:w-80 flex flex-col order-1'>
         {/* Info Field */}
         <div className='bg-white rounded-lg shadow-lg p-6 mb-8 flex-none'>
           <h2 className='text-2xl font-bold mb-4 text-black'>
@@ -53,7 +53,7 @@ export default function ClientRoom() {
         </div>
 
         {/* Player List Field */}
-        <div className='bg-white rounded-lg shadow-lg p-6 flex-grow'>
+        {/*         <div className='bg-white rounded-lg shadow-lg p-6 mb-8 flex-grow'>
           <h2 className='text-2xl font-bold mb-4 text-green-600'>
             Joined Players
           </h2>
@@ -70,7 +70,7 @@ export default function ClientRoom() {
               <p className='text-lg text-gray-600'>No users yet!</p>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Question Answer Field */}
