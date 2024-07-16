@@ -81,18 +81,62 @@ export default function HostRoom() {
   }, []);
 
   /**
-   * The Component of the Answers Tab
+   * The Component of the Answer List Tab
    */
-  const Answers = useCallback(() => {
-    const answeredUsers = getUsers().filter((user) => user.answer != null);
+  const PlayerList = useCallback(() => {
+    return (
+      <div className='scroll-container overflow-y-auto max-h-[65vh] border-t border-gray-200'>
+        {getUsers().length > 0 ? (
+          <ul className='space-y-2 mt-4'>
+            {getUsers().map((user, index) => (
+              <div className='flex justify-between items-center mr-5'>
+                <li className='text-lg flex items-center' key={index}>
+                  <span className='mr-2 text-gray-500'>{index + 1}.</span>
+                  <span className='flex-grow'>{user.username}</span>
+                </li>
+                <div
+                  className={
+                    user.answer
+                      ? `bg-blue-400 border border-blue-600 rounded-full w-5 h-5`
+                      : `bg-gray-300 border border-gray-500 rounded-full w-5 h-5`
+                  }
+                ></div>
+              </div>
+            ))}
+          </ul>
+        ) : (
+          <p className='text-lg text-gray-600 mt-4'>No users yet!</p>
+        )}
+      </div>
+    );
+  }, [room.users]);
 
+  /**
+   * The Component of the Answer List Tab
+   */
+  const AnswerList = useCallback(() => {
+    const answeredUsers = getUsers().filter((user) => user.answer != null);
+    const getColorClass = (answer?: any) => {
+      switch (getQuestion().type) {
+        case QUESTION.MultipleChoice:
+          if (answer && answer === getQuestion().answer)
+            return 'bg-green-50 border-green-200  hover:bg-green-100';
+          else return 'bg-red-50 border-red-200  hover:bg-red-100';
+        case QUESTION.TextInput:
+          if (answer && answer === getQuestion().answer)
+            return 'bg-green-50 border-green-200  hover:bg-green-100';
+          else return 'bg-red-50 border-red-200  hover:bg-red-100';
+        case QUESTION.OpenEnd:
+          return 'bg-gray-50 border-gray-200  hover:bg-gray-100';
+      }
+    };
     return (
       <div className='scroll-container overflow-y-auto h-[80vh] p-4 bg-white shadow-md rounded-lg border border-gray-300'>
         {room.num_of_answered > 0 ? (
-          <ul className='space-y-4'>
+          <ul className='space-y-2'>
             {answeredUsers.map((user, index) => (
               <li
-                className='flex flex-col space-y-1 p-4 border border-gray-200 bg-gray-50 hover:bg-gray-100 rounded-lg transition'
+                className={`flex flex-col space-y-1 p-3 border rounded-lg transition ${getColorClass(user.answer)} max-w-[40vh]`}
                 key={index}
               >
                 <span className='font-semibold text-lg text-gray-800'>
@@ -203,29 +247,7 @@ export default function HostRoom() {
               {room.num_of_answered}/{room.num_of_students}
             </span>
           </div>
-          <div className='scroll-container overflow-y-auto max-h-[65vh] border-t border-gray-200'>
-            {getUsers().length > 0 ? (
-              <ul className='space-y-2 mt-4'>
-                {getUsers().map((user, index) => (
-                  <div className='flex justify-between items-center mr-5'>
-                    <li className='text-lg flex items-center' key={index}>
-                      <span className='mr-2 text-gray-500'>{index + 1}.</span>
-                      <span className='flex-grow'>{user.username}</span>
-                    </li>
-                    <div
-                      className={
-                        user.answer
-                          ? `bg-green-500 rounded-full w-5 h-5`
-                          : `bg-red-500 rounded-full w-5 h-5`
-                      }
-                    ></div>
-                  </div>
-                ))}
-              </ul>
-            ) : (
-              <p className='text-lg text-gray-600 mt-4'>No users yet!</p>
-            )}
-          </div>
+          <PlayerList />
         </div>
       </div>
 
@@ -280,7 +302,7 @@ export default function HostRoom() {
           }}
           defaultValue={tab}
         />
-        {tab === TABS.Answers ? <Answers /> : <Statistics />}
+        {tab === TABS.Answers ? <AnswerList /> : <Statistics />}
       </div>
     </div>
   );

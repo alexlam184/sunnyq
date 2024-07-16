@@ -4,7 +4,7 @@ import { MESSAGE, PAGESTATE } from '@/src/lib/enum';
 import { socket } from '@/src/lib/socket/socketio.service';
 import { usePageStateStore } from '@/store/PageStateStroe';
 import { useLobbyStore } from '@/store/LobbyStore';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useRoomStore } from '@/store/RoomStore';
 import ClientRoom from '@/src/components/client/ClientRoom';
 
