@@ -1,22 +1,10 @@
 import { CHOICE, QUESTION } from '@/src/lib/type';
 import { useRoomStore } from '@/store/RoomStore';
 import Button from '../ui/Button';
-import {
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
 import { useCallback, useMemo, useState } from 'react';
 import Tabs from '../ui/Tabs';
 import { TabOption } from '../ui/Tabs';
+import Statistics from '../common/Statistics';
 
 /**
  * Define the Tab options
@@ -28,46 +16,6 @@ enum TABS {
 
 export default function HostRoom() {
   const { getRoomCode, getUsers, getHost, getQuestion, room } = useRoomStore();
-
-  /**
-   * Get the counts of each choice
-   */
-  const data = useMemo(() => {
-    const counts: { [key in CHOICE]: number } = { A: 0, B: 0, C: 0, D: 0 };
-
-    getUsers().forEach((user) => {
-      user.answer && counts[user.answer as CHOICE]++;
-    });
-
-    return Object.entries(counts).map(([name, value]) => ({ name, value }));
-  }, [room]);
-
-  /**
-   * Calculate the accuracy of the question's answers
-   */
-  const accuracy = useMemo(() => {
-    const totalUsers = room.num_of_answered;
-    if (totalUsers === 0) return 0;
-
-    const correctAnswers = getUsers().filter(
-      (user) => user.answer === getQuestion().answer
-    ).length;
-
-    return (correctAnswers / totalUsers) * 100;
-  }, [room]);
-
-  /**
-   * Define the colors for each choice.
-   */
-  const COLORS = useMemo(
-    () => [
-      '#0088FE', // Blue
-      '#00C49F', // Green
-      '#FFBB28', // Orange
-      '#FF8042', // Red
-    ],
-    []
-  );
 
   /**
    * Define the tabs option
@@ -153,73 +101,6 @@ export default function HostRoom() {
     );
   }, [room.users]);
 
-  /**
-   * The Component of the Statistics Tab
-   */
-  const Statistics = useCallback(() => {
-    return (
-      <div className='scroll-container overflow-y-auto h-[80vh] p-4 bg-gray-100 shadow-md rounded-lg border border-gray-300'>
-        <div>
-          <h2 className='text-2xl font-bold mb-4 text-left text-gray-700'>
-            Accuracy: {accuracy.toFixed(1)}%
-          </h2>
-        </div>
-        <div>
-          <h2 className='text-2xl font-bold mb-4 text-center text-gray-700 underline'>
-            Bar Chart
-          </h2>
-          <ResponsiveContainer width='100%' height={300}>
-            <BarChart data={data}>
-              <CartesianGrid strokeDasharray='3 3' />
-              <XAxis dataKey='name' />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey='value' fill='#8884d8' name='count'>
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div>
-          <h2 className='text-2xl font-bold mb-4 text-center text-gray-700 underline'>
-            Pie Chart
-          </h2>
-          <ResponsiveContainer width='100%' height={300}>
-            <PieChart>
-              <Pie
-                data={data}
-                cx='50%'
-                cy='50%'
-                labelLine={false}
-                outerRadius={80}
-                fill='#8884d8'
-                dataKey='value'
-                label={({ name, percent }) =>
-                  `${name} ${(percent * 100).toFixed(0)}%`
-                }
-              >
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    );
-  }, [data]);
-
   return (
     <div className='flex min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 text-gray-800 p-8 flex-col md:flex-row'>
       <div className='w-full md:w-80 flex flex-col order-1'>
@@ -302,7 +183,7 @@ export default function HostRoom() {
           }}
           defaultValue={tab}
         />
-        {tab === TABS.Answers ? <AnswerList /> : <Statistics />}
+        {tab === TABS.Answers ? <AnswerList /> : <Statistics room={room} />}
       </div>
     </div>
   );
