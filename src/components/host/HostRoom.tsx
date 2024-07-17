@@ -18,8 +18,7 @@ enum TABS {
 }
 
 export default function HostRoom() {
-  const { getRoomCode, getUsers, getHost, getQuestion, room, resetRoom } =
-    useRoomStore();
+  const { room, resetRoom } = useRoomStore();
   const { resetPageState } = usePageStateStore();
   /**
    * Define the tabs option
@@ -33,14 +32,14 @@ export default function HostRoom() {
   }, []);
 
   /**
-   * The Component of the Answer List Tab
+   * The Component of the Player List Tab
    */
   const PlayerList = useCallback(() => {
     return (
       <div className='scroll-container overflow-y-auto max-h-[65vh] border-t border-gray-200'>
-        {getUsers().length > 0 ? (
+        {room.num_of_students > 0 ? (
           <ul className='space-y-2 mt-4'>
-            {getUsers().map((user, index) => (
+            {room.users.map((user, index) => (
               <div className='flex justify-between items-center mr-5'>
                 <li className='text-lg flex items-center' key={index}>
                   <span className='mr-2 text-gray-500'>{index + 1}.</span>
@@ -67,15 +66,15 @@ export default function HostRoom() {
    * The Component of the Answer List Tab
    */
   const AnswerList = useCallback(() => {
-    const answeredUsers = getUsers().filter((user) => user.answer != null);
+    const answeredUsers = room.users.filter((user) => user.answer != null);
     const getColorClass = (answer?: any) => {
-      switch (getQuestion().type) {
+      switch (room.question.type) {
         case QUESTION.MultipleChoice:
-          if (answer && answer === getQuestion().answer)
+          if (answer && answer === room.question.answer)
             return 'bg-green-50 border-green-200  hover:bg-green-100';
           else return 'bg-red-50 border-red-200  hover:bg-red-100';
         case QUESTION.TextInput:
-          if (answer && answer === getQuestion().answer)
+          if (answer && answer === room.question.answer)
             return 'bg-green-50 border-green-200  hover:bg-green-100';
           else return 'bg-red-50 border-red-200  hover:bg-red-100';
         case QUESTION.OpenEnd:
@@ -109,7 +108,7 @@ export default function HostRoom() {
    * Handle delete room event
    */
   const handleDeleteRoom = () => {
-    socket.emit(MESSAGE.DELETE_ROOM, { roomCode: getRoomCode() });
+    socket.emit(MESSAGE.DELETE_ROOM, { roomCode: room.roomCode });
     resetRoom();
     resetPageState();
   };
@@ -122,13 +121,13 @@ export default function HostRoom() {
           <h2 className='text-2xl font-bold mb-4 text-black'>
             Teacher:{' '}
             <span className='font-semibold text-black'>
-              {getHost().username}
+              {room.host.username}
             </span>
           </h2>
           <p className='text-xl mb-2'>
             Code:{' '}
             <span className='font-extrabold text-blue-700 text-3xl'>
-              {getRoomCode()}
+              {room.roomCode}
             </span>
           </p>
         </div>
@@ -154,13 +153,13 @@ export default function HostRoom() {
         <div className='bg-gray-100 p-6 rounded-lg flex-grow'>
           {/* Question and Remarks */}
           <h2 className='text-2xl font-bold mb-4 text-blue-600'>Question</h2>
-          <p className='text-xl mb-2'>{getQuestion().question}</p>
-          <p className='text-sm text-gray-500 mb-4'>{getQuestion().remark}</p>
+          <p className='text-xl mb-2'>{room.question.question}</p>
+          <p className='text-sm text-gray-500 mb-4'>{room.question.remark}</p>
 
           {/* Answer Field */}
-          {getQuestion().type === QUESTION.MultipleChoice && (
+          {room.question.type === QUESTION.MultipleChoice && (
             <div className='space-y-4'>
-              {getQuestion().choices?.map((choice) => (
+              {room.question.choices?.map((choice) => (
                 <div key={choice.value} className='flex items-center text-lg'>
                   <span className='font-semibold mr-2'>{choice.value}:</span>
                   <span>{choice.content}</span>

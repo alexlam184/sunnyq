@@ -8,10 +8,9 @@ import { MESSAGE } from '@/src/lib/enum';
 import TextAreaField from '../ui/TextAreaField';
 
 export default function ClientRoom() {
-  const { getHost, getUsers, getQuestion, username, getRoomCode, userid } =
-    useRoomStore();
+  const { username, userid, room } = useRoomStore();
   const [answer, setAnswer] = useState<string | null>(
-    getQuestion().type === QUESTION.MultipleChoice ? null : ''
+    room.question.type === QUESTION.MultipleChoice ? null : ''
   );
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [reminded, setReminded] = useState<boolean>(false);
@@ -28,9 +27,12 @@ export default function ClientRoom() {
       setReminded(true);
       return;
     }
-    const roomCode: string = getRoomCode();
 
-    socket.emit(MESSAGE.SUBMIT_ANSWER, { roomCode, userid, answer });
+    socket.emit(MESSAGE.SUBMIT_ANSWER, {
+      roomCode: room.roomCode,
+      userid: userid,
+      answer: answer,
+    });
     setSubmitted(true);
     setReminded(false);
   };
@@ -47,30 +49,10 @@ export default function ClientRoom() {
           <h2 className='text-2xl font-bold mb-4 text-black'>
             Teacher:{' '}
             <span className='font-semibold text-black'>
-              {getHost().username}
+              {room.host.username}
             </span>
           </h2>
         </div>
-
-        {/* Player List Field */}
-        {/*         <div className='bg-white rounded-lg shadow-lg p-6 mb-8 flex-grow'>
-          <h2 className='text-2xl font-bold mb-4 text-green-600'>
-            Joined Players
-          </h2>
-          <div className='scroll-container overflow-y-auto max-h-[65vh]'>
-            {getUsers().length > 0 ? (
-              <ul className='space-y-2'>
-                {getUsers().map((user, index) => (
-                  <li className='text-lg' key={index}>
-                    {index + 1}. {user.username}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className='text-lg text-gray-600'>No users yet!</p>
-            )}
-          </div>
-        </div> */}
       </div>
 
       {/* Question Answer Field */}
@@ -82,13 +64,13 @@ export default function ClientRoom() {
         <div className='bg-gray-100 p-6 rounded-lg flex-grow'>
           {/* Question and Remarks */}
           <h2 className='text-2xl font-bold mb-4 text-green-600'>Question</h2>
-          <p className='text-xl mb-2'>{getQuestion().question}</p>
-          <p className='text-sm text-gray-500 mb-4'>{getQuestion().remark}</p>
+          <p className='text-xl mb-2'>{room.question.question}</p>
+          <p className='text-sm text-gray-500 mb-4'>{room.question.remark}</p>
 
           {/* Answer Field */}
-          {getQuestion().type === QUESTION.MultipleChoice ? (
+          {room.question.type === QUESTION.MultipleChoice ? (
             <div className='space-y-4'>
-              {getQuestion().choices?.map((choice: choice) => (
+              {room.question.choices?.map((choice: choice) => (
                 <div
                   key={choice.value}
                   className={`flex items-center text-lg cursor-pointer ${
@@ -132,7 +114,7 @@ export default function ClientRoom() {
           </div>
 
           {/*Display a reminder to answer multiple-choice question before submission when reminded is true*/}
-          {getQuestion().type === QUESTION.MultipleChoice && reminded && (
+          {room.question.type === QUESTION.MultipleChoice && reminded && (
             <div className='flex justify-end space-x-4 mt-8'>
               <span className='text-green-700'>
                 Please answer the question before the submission.

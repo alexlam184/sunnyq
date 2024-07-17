@@ -32,15 +32,16 @@ const COLORS = [
 ];
 
 const Statistics: React.FC<StatisticsProps> = ({ room }) => {
+  const { num_of_answered, question, users } = room;
   /**
    * Calculate the accuracy of the question's answers
    */
   const accuracy = useMemo(() => {
-    const totalUsers = room.num_of_answered;
+    const totalUsers = num_of_answered;
     if (totalUsers === 0) return 0;
 
-    const correctAnswers = room.users.filter(
-      (user) => user.answer === room.question.answer
+    const correctAnswers = users.filter(
+      (user) => user.answer === question.answer
     ).length;
 
     return (correctAnswers / totalUsers) * 100;
@@ -52,7 +53,7 @@ const Statistics: React.FC<StatisticsProps> = ({ room }) => {
   const data = useMemo(() => {
     const counts: { [key in CHOICE]: number } = { A: 0, B: 0, C: 0, D: 0 };
 
-    room.users.forEach((user) => {
+    users.forEach((user) => {
       user.answer && counts[user.answer as CHOICE]++;
     });
 
