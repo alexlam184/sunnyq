@@ -5,6 +5,9 @@ import { useCallback, useMemo, useState } from 'react';
 import Tabs from '../ui/Tabs';
 import { TabOption } from '../ui/Tabs';
 import Statistics from '../common/Statistics';
+import { socket } from '@/src/lib/socket/socketio.service';
+import { MESSAGE, PAGESTATE } from '@/src/lib/enum';
+import { usePageStateStore } from '@/store/PageStateStroe';
 
 /**
  * Define the Tab options
@@ -15,8 +18,9 @@ enum TABS {
 }
 
 export default function HostRoom() {
-  const { getRoomCode, getUsers, getHost, getQuestion, room } = useRoomStore();
-
+  const { getRoomCode, getUsers, getHost, getQuestion, room, resetRoom } =
+    useRoomStore();
+  const { resetPageState } = usePageStateStore();
   /**
    * Define the tabs option
    */
@@ -101,6 +105,15 @@ export default function HostRoom() {
     );
   }, [room.users]);
 
+  /**
+   * Handle delete room event
+   */
+  const handleDeleteRoom = () => {
+    socket.emit(MESSAGE.DELETE_ROOM, { roomCode: getRoomCode() });
+    resetRoom();
+    resetPageState();
+  };
+
   return (
     <div className='flex min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 text-gray-800 p-8 flex-col md:flex-row'>
       <div className='w-full md:w-80 flex flex-col order-1'>
@@ -167,7 +180,9 @@ export default function HostRoom() {
           />
           <Button
             buttonText='Delete Game'
-            onClick={() => {}}
+            onClick={() => {
+              handleDeleteRoom();
+            }}
             buttonType='border'
             themeColor='blue'
           />

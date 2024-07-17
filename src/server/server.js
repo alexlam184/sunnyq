@@ -28,27 +28,42 @@ app.prepare().then(() => {
       console.log(`Server: user disconnected: ${socket.id}`);
     });
 
+    /**
+     * Fetch an userId.
+     */
     socket.on('user:fetch-id', (callback) => {
       callback(socket.id);
       console.log(`Server: User ID ${socket.id} fetched.`);
     });
 
+    /**
+     * Fetch a lobby.
+     */
     socket.on('lobby:fetch-lobby', (callback) => {
       callback(Array.from(codetoRoomMap.keys()));
       console.log(`Server: Lobby fetched.`);
     });
 
+    /**
+     * Create a new room and join it as the host.
+     */
     socket.on('lobby:host-create-room', ({ roomCode, room }) => {
       codetoRoomMap.set(roomCode, room);
       socket.join(roomCode); // Host join the room
       console.log(`Server: Room ${roomCode} was created.`);
     });
 
+    /**
+     * Fetch a room by its code.
+     */
     socket.on('room:fetch-room', (roomCode, callback) => {
       callback(codetoRoomMap.get(roomCode));
       console.log(`Server: Room fetched.`);
     });
 
+    /**
+     * User joins a room.
+     */
     socket.on('room:join-room', ({ roomCode, user }) => {
       if (!codetoRoomMap.has(roomCode)) {
         console.log(`Room doesn't exist`);
@@ -64,19 +79,22 @@ app.prepare().then(() => {
       room.users.push(user);
       room.num_of_students++;
 
-      // Fetch other users in the room
-      // use fetching room right now
-      // socket.to(roomCode).emit('room:fetch-request', 'add-user', user);
       socket.to(roomCode).emit('room:fetch-request', 'fetch-room', room);
 
       console.log(`Server: user ${socket.id} has joined room ${roomCode}`);
     });
 
+    /**
+     * User leaves a room.
+     */
     socket.on('room:leave-room', ({ roomCode }) => {
       socket.leave(roomCode);
       console.log(`Server: user ${socket.id} left room ${roomCode}`);
     });
 
+    /**
+     * Submit an answer in a room.
+     */
     socket.on('room:submit-answer', ({ roomCode, userid, answer }) => {
       if (!codetoRoomMap.has(roomCode)) {
         console.log(`Room doesn't exist`);
@@ -98,6 +116,25 @@ app.prepare().then(() => {
 
       // Fetch other users in the room
       socket.to(roomCode).emit('room:fetch-request', 'fetch-room', room);
+    });
+
+    /**
+     * Delete a room.
+     */
+    socket.on('room:delete-room', ({ roomCode }) => {
+      if (!codetoRoomMap.has(roomCode)) {
+        console.log(`Room doesn't exist`);
+        return;
+      }
+      // Clear lobby storage
+      codetoRoomMap.delete(roomCode);
+      console.log(`Room ${roomCode} has been deleted.`);
+
+      // request all users to leave room
+      socket.to(roomCode).emit('room:fetch-request', 'leave-room');
+
+      // Clear all users from the socket room
+      io.in(roomCode).socketsLeave(roomCode);
     });
   });
 

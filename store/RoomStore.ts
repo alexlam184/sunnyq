@@ -1,13 +1,20 @@
 import { ROOM_PHASE } from '@src/lib/room-phase';
-import {
-  CHOICE,
-  MultipleChoiceQuestion,
-  BaseQuestion,
-  QUESTION,
-  Room,
-  User,
-} from '@/src/lib/type';
+import { BaseQuestion, QUESTION, Room, User } from '@/src/lib/type';
 import { create } from 'zustand';
+
+const emptyRoom: Room = {
+  roomCode: '',
+  phase: ROOM_PHASE.SETUP,
+  users: [],
+  host: { userid: '', username: '' },
+  question: {
+    type: QUESTION.MultipleChoice,
+    question: '',
+    remark: '',
+  },
+  num_of_students: 0,
+  num_of_answered: 0,
+};
 
 type RoomStore = {
   /**
@@ -34,6 +41,10 @@ type RoomStore = {
    * Set the current room.
    */
   setRoom: (room: Room) => void;
+  /**
+   * Reset the current room.
+   */
+  resetRoom: () => void;
   /**
    * Get the current room code.
    */
@@ -105,20 +116,9 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
   userid: '',
   setUsername: (username: string) => set({ username: username }),
   setUserID: (userid: string) => set({ userid: userid }),
-  room: {
-    roomCode: '',
-    phase: ROOM_PHASE.SETUP,
-    users: [],
-    host: { userid: '', username: '' },
-    question: {
-      type: QUESTION.MultipleChoice,
-      question: '',
-      remark: '',
-    },
-    num_of_students: 0,
-    num_of_answered: 0,
-  },
+  room: emptyRoom,
   setRoom: (room: Room) => set({ room: room }),
+  resetRoom: () => set({ room: emptyRoom }),
   getRoomCode: () => get().room.roomCode,
   setRoomCode: (roomCode: string) => {
     const _room = get().room;

@@ -20,9 +20,9 @@ const renderSwitch = (param: PAGESTATE) => {
 };
 
 export default function ClientPage() {
-  const { pageState } = usePageStateStore();
+  const { pageState, resetPageState } = usePageStateStore();
   const { resetLobby } = useLobbyStore();
-  const { addUser, setRoom } = useRoomStore();
+  const { addUser, setRoom, resetRoom } = useRoomStore();
 
   useEffect(() => {
     resetLobby();
@@ -35,6 +35,10 @@ export default function ClientPage() {
           break;
         case 'fetch-room':
           setRoom(requestItem);
+          break;
+        case 'leave-room':
+          resetRoom();
+          resetPageState();
           break;
         default:
           console.log(
