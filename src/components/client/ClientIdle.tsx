@@ -8,7 +8,6 @@ import { useRoomStore } from '@/store/RoomStore';
 import React, { useState } from 'react';
 import Button from '../ui/Button';
 import InputField from '../ui/InputField';
-import AttentionAlert from '../ui/AttentionAlert';
 
 export default function ClientIdle() {
   const [roomCode, setRoomCode] = useState<string>('');

@@ -1,13 +1,15 @@
-import { CHOICE, QUESTION } from '@/src/lib/type';
+import { QUESTION } from '@/src/lib/type';
 import { useRoomStore } from '@/store/RoomStore';
 import Button from '../ui/Button';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Tabs from '../ui/Tabs';
 import { TabOption } from '../ui/Tabs';
 import Statistics from '../common/Statistics';
 import { socket } from '@/src/lib/socket/socketio.service';
-import { MESSAGE, PAGESTATE } from '@/src/lib/enum';
+import { MESSAGE } from '@/src/lib/enum';
 import { usePageStateStore } from '@/store/PageStateStroe';
+import { ROOM_PHASE } from '@/src/lib/room-phase';
+import { useForceUpdate } from '@/src/hook/useForceUpdate';
 
 /**
  * Define the Tab options
@@ -20,6 +22,9 @@ enum TABS {
 export default function HostRoom() {
   const { room, resetRoom } = useRoomStore();
   const { resetPageState } = usePageStateStore();
+
+  const { forceUpdate } = useForceUpdate();
+
   /**
    * Define the tabs option
    */
@@ -113,6 +118,15 @@ export default function HostRoom() {
     resetPageState();
   };
 
+  /**
+   * Handle pause room event
+   */
+  const handlePauseRoom = () => {
+    room.phase = ROOM_PHASE.PAUSE;
+    socket.emit(MESSAGE.PAUSE_ROOM, { roomCode: room.roomCode });
+    forceUpdate(room.phase);
+  };
+
   return (
     <div className='flex min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 text-gray-800 p-8 flex-col md:flex-row'>
       <div className='w-full md:w-80 flex flex-col order-1'>
@@ -172,8 +186,11 @@ export default function HostRoom() {
         {/* Buttons */}
         <div className='flex justify-center space-x-4 mt-8'>
           <Button
-            buttonText='Stop Answering'
-            onClick={() => {}}
+            buttonText='Pause Game'
+            onClick={() => {
+              handlePauseRoom();
+            }}
+            disabled={room.phase === ROOM_PHASE.PAUSE}
             buttonType='base'
             themeColor='blue'
           />
@@ -196,6 +213,11 @@ export default function HostRoom() {
             setTab(option.value);
           }}
           defaultValue={tab}
+          disabledValues={
+            room.question.type === QUESTION.OpenEnd
+              ? [TABS.Statistics]
+              : undefined
+          }
         />
         {tab === TABS.Answers ? <AnswerList /> : <Statistics room={room} />}
       </div>

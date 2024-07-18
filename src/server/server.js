@@ -119,6 +119,24 @@ app.prepare().then(() => {
     });
 
     /**
+     * Pause the room.
+     */
+    socket.on('room:pause-room', ({ roomCode }) => {
+      if (!codetoRoomMap.has(roomCode)) {
+        console.log(`Room doesn't exist`);
+        return;
+      }
+      // Get room
+      const room = codetoRoomMap.get(roomCode);
+
+      // Pause the room
+      room.phase = 'PAUSE';
+
+      // Fetch other users in the room
+      socket.to(roomCode).emit('room:fetch-request', 'fetch-room', room);
+    });
+
+    /**
      * Delete a room.
      */
     socket.on('room:delete-room', ({ roomCode }) => {
@@ -136,6 +154,10 @@ app.prepare().then(() => {
       // Clear all users from the socket room
       io.in(roomCode).socketsLeave(roomCode);
     });
+
+    /**
+     * TODO: Pause game.
+     */
   });
 
   instrument(io, {

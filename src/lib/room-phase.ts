@@ -1,5 +1,5 @@
 export enum ROOM_PHASE {
   SETUP = 'SETUP',
-  ANSWERING = 'ANSWERING',
-  SHOW_STAT = 'SHOW_STAT',
+  RUNNING = 'RUNNING',
+  PAUSE = 'PAUSE',
 }

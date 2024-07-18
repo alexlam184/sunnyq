@@ -1,4 +1,4 @@
-import { CHOICE, Room, User } from '@/src/lib/type';
+import { CHOICE, QUESTION, Room, User } from '@/src/lib/type';
 import { useMemo } from 'react';
 import {
   ResponsiveContainer,
@@ -51,24 +51,39 @@ const Statistics: React.FC<StatisticsProps> = ({ room }) => {
    * Get the counts of each choice
    */
   const data = useMemo(() => {
-    const counts: { [key in CHOICE]: number } = { A: 0, B: 0, C: 0, D: 0 };
-
-    users.forEach((user) => {
-      user.answer && counts[user.answer as CHOICE]++;
-    });
-
-    return Object.entries(counts).map(([name, value]) => ({ name, value }));
+    switch (room.question.type) {
+      case QUESTION.MultipleChoice:
+        const counts: { [key in CHOICE]: number } = { A: 0, B: 0, C: 0, D: 0 };
+        users.forEach((user) => {
+          user.answer && counts[user.answer as CHOICE]++;
+        });
+        return Object.entries(counts).map(([name, value]) => ({ name, value }));
+      case QUESTION.TextInput:
+        // TODO: complete data counts
+        const correctCounts = { correct: 0, incorrect: 1 };
+        users.forEach((user) => {
+          user.answer && user.answer === room.question.answer
+            ? correctCounts.correct++
+            : correctCounts.incorrect++;
+        });
+        return Object.entries(correctCounts).map(([name, value]) => ({
+          name,
+          value,
+        }));
+      default:
+        return [];
+    }
   }, [room]);
 
   return (
-    <div className='scroll-container overflow-y-auto h-[80vh] p-4 bg-gray-100 shadow-md rounded-lg border border-gray-300'>
+    <div className='scroll-container overflow-y-auto max-h-[95vh] p-4 bg-gray-100 shadow-md rounded-lg border border-gray-300'>
       <div>
-        <h2 className='text-2xl font-bold mb-4 text-left text-gray-700'>
+        <h2 className='text-xl font-bold mb-4 text-left text-gray-700'>
           Accuracy: {accuracy.toFixed(1)}%
         </h2>
       </div>
       <div>
-        <h2 className='text-2xl font-bold mb-4 text-center text-gray-700 underline'>
+        <h2 className='text-xl font-bold mb-4 text-center text-gray-700 underline'>
           Bar Chart
         </h2>
         <ResponsiveContainer width='100%' height={300}>
@@ -90,7 +105,7 @@ const Statistics: React.FC<StatisticsProps> = ({ room }) => {
         </ResponsiveContainer>
       </div>
       <div>
-        <h2 className='text-2xl font-bold mb-4 text-center text-gray-700 underline'>
+        <h2 className='text-xl font-bold mb-4 text-center text-gray-700 underline'>
           Pie Chart
         </h2>
         <ResponsiveContainer width='100%' height={300}>
