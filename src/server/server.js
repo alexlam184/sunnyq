@@ -24,7 +24,63 @@ app.prepare().then(() => {
   io.on('connection', (socket) => {
     console.log(`Server: user connected: ${socket.id}`);
 
+    const deleteRoom = (roomCode) => {
+      if (!codetoRoomMap.has(roomCode)) {
+        console.log(`Room doesn't exist`);
+        return;
+      }
+      // Clear lobby storage
+      codetoRoomMap.delete(roomCode);
+      console.log(`Room ${roomCode} has been deleted.`);
+
+      // request all users to leave room
+      socket.to(roomCode).emit('room:fetch-request', 'leave-room');
+
+      // Clear all users from the socket room
+      io.in(roomCode).socketsLeave(roomCode);
+    };
+
+    const leaveRoom = (roomCode, userid) => {
+      if (!codetoRoomMap.has(roomCode)) {
+        console.log(`Room doesn't exist`);
+        return;
+      }
+
+      // Leave socketIO room
+      socket.leave(roomCode);
+
+      // Get room
+      const room = codetoRoomMap.get(roomCode);
+
+      // Remove Player
+      room.users.map((user, index) => {
+        if (user.userid === userid) {
+          room.users.splice(index, 1);
+
+          // Fetch other users in the room
+          socket.to(roomCode).emit('room:fetch-request', 'fetch-room', room);
+
+          // Early exit
+          return;
+        }
+      });
+    };
+
     socket.on('disconnect', () => {
+      codetoRoomMap.forEach((room, roomCode) => {
+        // host disconnect
+        if (room.host.userid === socket.id) {
+          deleteRoom(roomCode);
+          return;
+        }
+        // user disconnect
+        room.users.map((user) => {
+          if (user.userid === socket.id) {
+            leaveRoom(roomCode, socket.id);
+            return;
+          }
+        });
+      });
       console.log(`Server: user disconnected: ${socket.id}`);
     });
 
@@ -140,24 +196,8 @@ app.prepare().then(() => {
      * Delete a room.
      */
     socket.on('room:delete-room', ({ roomCode }) => {
-      if (!codetoRoomMap.has(roomCode)) {
-        console.log(`Room doesn't exist`);
-        return;
-      }
-      // Clear lobby storage
-      codetoRoomMap.delete(roomCode);
-      console.log(`Room ${roomCode} has been deleted.`);
-
-      // request all users to leave room
-      socket.to(roomCode).emit('room:fetch-request', 'leave-room');
-
-      // Clear all users from the socket room
-      io.in(roomCode).socketsLeave(roomCode);
+      deleteRoom(roomCode);
     });
-
-    /**
-     * TODO: Pause game.
-     */
   });
 
   instrument(io, {
