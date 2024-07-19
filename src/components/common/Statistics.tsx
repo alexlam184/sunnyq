@@ -45,7 +45,7 @@ const Statistics: React.FC<StatisticsProps> = ({ room }) => {
     ).length;
 
     return (correctAnswers / totalUsers) * 100;
-  }, [room]);
+  }, [num_of_answered, question.answer, users]);
 
   /**
    * Get the counts of each choice
@@ -73,7 +73,7 @@ const Statistics: React.FC<StatisticsProps> = ({ room }) => {
       default:
         return [];
     }
-  }, [room]);
+  }, [users, room.question.answer, room.question.type]);
 
   return (
     <div className='scroll-container overflow-y-auto max-h-[95vh] p-4 bg-gray-100 shadow-md rounded-lg border border-gray-300'>

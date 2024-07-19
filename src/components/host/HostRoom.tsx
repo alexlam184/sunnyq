@@ -45,7 +45,10 @@ export default function HostRoom() {
         {room.num_of_students > 0 ? (
           <ul className='space-y-2 mt-4'>
             {room.users.map((user, index) => (
-              <div className='flex justify-between items-center mr-5'>
+              <div
+                key={index}
+                className='flex justify-between items-center mr-5'
+              >
                 <li className='text-lg flex items-center' key={index}>
                   <span className='mr-2 text-gray-500'>{index + 1}.</span>
                   <span className='flex-grow'>{user.username}</span>
@@ -65,7 +68,7 @@ export default function HostRoom() {
         )}
       </div>
     );
-  }, [room.users]);
+  }, [room.users, room.num_of_students]);
 
   /**
    * The Component of the Answer List Tab
@@ -107,7 +110,12 @@ export default function HostRoom() {
         )}
       </div>
     );
-  }, [room.users]);
+  }, [
+    room.users,
+    room.num_of_answered,
+    room.question.answer,
+    room.question.type,
+  ]);
 
   /**
    * Handle delete room event
@@ -173,8 +181,8 @@ export default function HostRoom() {
           {/* Answer Field */}
           {room.question.type === QUESTION.MultipleChoice && (
             <div className='space-y-4'>
-              {room.question.choices?.map((choice) => (
-                <div key={choice.value} className='flex items-center text-lg'>
+              {room.question.choices?.map((choice, index) => (
+                <div key={index} className='flex items-center text-lg'>
                   <span className='font-semibold mr-2'>{choice.value}:</span>
                   <span>{choice.content}</span>
                 </div>

@@ -134,7 +134,7 @@ const HostCreateRoom = () => {
         />
       </>
     );
-  }, []);
+  }, [question.question, question.remark, updateQuestion]);
 
   const tabOptions: TabOption[] = useMemo(() => {
     return [
@@ -156,7 +156,7 @@ const HostCreateRoom = () => {
         defaultValue={question.type}
       />
     );
-  }, [question.type]);
+  }, [question.type, tabOptions, updateQuestion]);
 
   const MultipleChoiceField = useCallback(() => {
     return (
@@ -209,7 +209,7 @@ const HostCreateRoom = () => {
         </div>
       </>
     );
-  }, []);
+  }, [choiceAnswer, choices, selectedOptions, updateChoices]);
 
   const TextInputField = useCallback(() => {
     return (
@@ -222,7 +222,7 @@ const HostCreateRoom = () => {
         defaultValue={textAnswer}
       />
     );
-  }, []);
+  }, [textAnswer]);
 
   const OpenEndField = () => {
     return null;

@@ -1,4 +1,4 @@
-import { CHOICE, MultipleChoice } from '@/src/lib/type';
+/* import { CHOICE } from '@/src/lib/type';
 
 let questionlist: MultipleChoice[] = [
   {
@@ -35,4 +35,4 @@ let questionlist: MultipleChoice[] = [
   },
 ];
 
-export default questionlist;
+export default questionlist; */

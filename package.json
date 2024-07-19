@@ -25,7 +25,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-element-to-jsx-string": "^15.0.0",
-    "recharts": "^2.12.7",
+    "recharts": "^2.13.0-alpha.4",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "tailwind-merge": "^2.3.0",
