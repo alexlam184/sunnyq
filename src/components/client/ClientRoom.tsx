@@ -19,7 +19,7 @@ export default function ClientRoom() {
   const [reminded, setReminded] = useState<boolean>(false);
 
   const handleChoiceSelect = (choice: CHOICE) => {
-    if (submitted) return;
+    if (submitted || room.phase === ROOM_PHASE.PAUSE) return;
     setAnswer(choice);
   };
 
@@ -80,14 +80,14 @@ export default function ClientRoom() {
               {room.question.choices?.map((choice: choice) => (
                 <div
                   key={choice.value}
-                  className={`flex items-center text-lg cursor-pointer ${
+                  className={`flex items-center text-lg ${room.phase !== ROOM_PHASE.PAUSE ? 'cursor-pointer' : null} ${
                     room.phase !== ROOM_PHASE.PAUSE
                       ? choice.value === answer
                         ? 'bg-green-200'
                         : 'bg-white'
                       : choice.value === room.question.answer
                         ? 'bg-green-200'
-                        : choice.value === answer
+                        : choice.value === answer && submitted
                           ? 'bg-red-200'
                           : 'bg-white'
                   } p-2 rounded`}
@@ -113,25 +113,29 @@ export default function ClientRoom() {
           )}
 
           {/* Submit button */}
-          <div className='flex justify-end space-x-4 mt-8'>
-            {!submitted ? (
-              <Button
-                buttonText='Submit'
-                onClick={handleSubmit}
-                buttonType='base'
-                themeColor='green'
-              />
-            ) : (
-              room.phase !== ROOM_PHASE.PAUSE && (
+
+          {room.phase !== ROOM_PHASE.PAUSE && (
+            <div className='flex justify-end space-x-4 mt-8'>
+              {!submitted ? (
+                <Button
+                  buttonText='Submit'
+                  onClick={handleSubmit}
+                  buttonType='base'
+                  themeColor='green'
+                />
+              ) : (
                 <span className='text-green-700'>
                   You have submitted your answer.
                 </span>
-              )
-            )}
-          </div>
+              )}
+            </div>
+          )}
+        </div>
 
-          {/*Display a reminder to answer multiple-choice question before submission when reminded is true*/}
-          {room.question.type === QUESTION.MultipleChoice && reminded && (
+        {/*Display a reminder to answer multiple-choice question before submission when reminded is true*/}
+        {room.phase !== ROOM_PHASE.PAUSE &&
+          room.question.type === QUESTION.MultipleChoice &&
+          reminded && (
             <div className='flex justify-end space-x-4 mt-8'>
               <span className='text-green-700'>
                 Please answer the question before the submission.
@@ -139,20 +143,19 @@ export default function ClientRoom() {
             </div>
           )}
 
-          {/*Display the answer after the room is paused*/}
-          {room.phase === ROOM_PHASE.PAUSE &&
-            (room.question.type === QUESTION.OpenEnd ? (
-              <div className='flex justify-end space-x-4 mt-8'>
-                <span className='text-green-700'>Times up!</span>
-              </div>
-            ) : (
-              <div className='flex justify-end space-x-4 mt-8'>
-                <span className='text-green-700'>
-                  Correct Answer: {room.question.answer}
-                </span>
-              </div>
-            ))}
-        </div>
+        {/*Display the answer after the room is paused*/}
+        {room.phase === ROOM_PHASE.PAUSE &&
+          (room.question.type === QUESTION.OpenEnd ? (
+            <div className='flex justify-end space-x-4 mt-8'>
+              <span className='text-green-700'>Times up!</span>
+            </div>
+          ) : (
+            <div className='flex justify-end space-x-4 mt-8'>
+              <span className='text-green-700'>
+                Correct Answer: {room.question.answer}
+              </span>
+            </div>
+          ))}
       </div>
     </div>
   );
