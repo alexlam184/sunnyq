@@ -107,7 +107,7 @@ export default function ClientRoom() {
                   setAnswer(e.target.value);
                 }}
                 defaultValue={answer || ''}
-                disabled={submitted}
+                disabled={submitted || room.phase === ROOM_PHASE.PAUSE}
               />
             </div>
           )}
