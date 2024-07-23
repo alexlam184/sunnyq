@@ -1,31 +1,42 @@
 import { PAGESTATE } from '@/src/lib/enum';
 import { usePageStateStore } from '@/store/PageStateStroe';
 import React from 'react';
+import Button from '../ui/Button';
 
 export default function HostIdle() {
-  const { setPageState: setGame } = usePageStateStore();
+  const { setPageState } = usePageStateStore();
   const handleCreateRoom = () => {
-    setGame(PAGESTATE.createRoom);
+    setPageState(PAGESTATE.createRoom);
   };
-  const handleExit = () => {};
 
   return (
-    <div className='flex flex-col items-center justify-center h-screen'>
-      <h1 className='text-4xl font-bold mb-8'>Welcome to SunnyQ!</h1>
-      <div className='space-x-4'>
-        <button
-          className='bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded'
-          onClick={handleCreateRoom}
-        >
-          Create Room
-        </button>
-        <button
-          className='bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded'
-          onClick={handleExit}
-        >
-          Exit
-        </button>
+    <section className='bg-slate-100'>
+      <div className='min-h-screen px-4 py-64 lg:py-32 lg:flex lg:h-screen items-center justify-center'>
+        <div className='mx-auto max-w-xl text-center'>
+          <h1 className='text-3xl font-extrabold sm:text-5xl text-black'>
+            Welcome to SunnyQ!
+          </h1>
+
+          <p className='mt-4 sm:text-xl/relaxed text-black'>
+            Teacher and Students can enjoy the fun of learning together.
+          </p>
+
+          <div className='mt-8 flex flex-wrap justify-center gap-4'>
+            <Button
+              buttonText='Create Room'
+              onClick={handleCreateRoom}
+              buttonType='base'
+              themeColor='blue'
+            />
+            <Button
+              buttonText='Learn More'
+              onClick={() => {}}
+              buttonType='border'
+              themeColor='blue'
+            />
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

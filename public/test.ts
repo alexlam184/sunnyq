@@ -1,11 +1,11 @@
-import { AnsType, MultipleChoice } from '@/src/lib/type';
+/* import { CHOICE } from '@/src/lib/type';
 
 let questionlist: MultipleChoice[] = [
   {
     type: 'mc',
     question: 'What is apple?',
     value: {
-      answer: AnsType.A,
+      answer: CHOICE.A,
       choice: ['fruit', 'transport', 'cloth', 'icq'],
     },
   },
@@ -13,7 +13,7 @@ let questionlist: MultipleChoice[] = [
     type: 'mc',
     question: 'What is the capital of France?',
     value: {
-      answer: AnsType.C,
+      answer: CHOICE.C,
       choice: ['London', 'Berlin', 'Paris', 'Rome'],
     },
   },
@@ -21,7 +21,7 @@ let questionlist: MultipleChoice[] = [
     type: 'mc',
     question: 'What is the chemical symbol for water?',
     value: {
-      answer: AnsType.B,
+      answer: CHOICE.B,
       choice: ['H2O', 'CO2', 'O2', 'H2SO4'],
     },
   },
@@ -29,10 +29,10 @@ let questionlist: MultipleChoice[] = [
     type: 'mc',
     question: 'What is the largest planet in our solar system?',
     value: {
-      answer: AnsType.D,
+      answer: CHOICE.D,
       choice: ['Mercury', 'Venus', 'Earth', 'Jupiter'],
     },
   },
 ];
 
-export default questionlist;
+export default questionlist; */

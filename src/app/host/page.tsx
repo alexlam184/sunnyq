@@ -1,10 +1,10 @@
 'use client';
 
 import HostIdle from '@src/components/host/HostIdle';
-import React, { use, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import HostCreateRoom from '@/src/components/host/HostCreateRoom';
 import { PAGESTATE, MESSAGE } from '@/src/lib/enum';
-import HostStart from '@/src/components/host/HostStart';
+import HostRoom from '@/src/components/host/HostRoom';
 import { usePageStateStore } from '@/store/PageStateStroe';
 import { socket } from '@/src/lib/socket/socketio.service';
 import { useLobbyStore } from '@/store/LobbyStore';
@@ -17,7 +17,7 @@ const renderSwitch = (param: PAGESTATE) => {
     case PAGESTATE.createRoom:
       return <HostCreateRoom />;
     case PAGESTATE.inGame:
-      return <HostStart />;
+      return <HostRoom />;
     default:
       return <HostIdle />;
   }
@@ -26,16 +26,19 @@ const renderSwitch = (param: PAGESTATE) => {
 export default function HostPage() {
   const { pageState } = usePageStateStore();
   const { resetLobby } = useLobbyStore();
-  const { addUser } = useRoomStore();
+  const { addUser, setRoom } = useRoomStore();
 
   useEffect(() => {
     resetLobby();
 
     //Subscribe Room Fetching Event
-    socket.on(MESSAGE.FETCH_ROOM, (requestCommand, requestItem) => {
+    socket.on(MESSAGE.FETCH_REQUEST, (requestCommand, requestItem) => {
       switch (requestCommand) {
         case 'add-user':
           addUser(requestItem);
+          break;
+        case 'fetch-room':
+          setRoom(requestItem);
           break;
         default:
           console.log(
@@ -46,9 +49,9 @@ export default function HostPage() {
 
     //Unsubscribe Room Fetching Event
     return () => {
-      socket.off(MESSAGE.FETCH_ROOM);
+      socket.off(MESSAGE.FETCH_REQUEST);
     };
-  }, []);
+  }, [addUser, resetLobby, setRoom]);
 
   return (
     <div className='min-h-screen'>
