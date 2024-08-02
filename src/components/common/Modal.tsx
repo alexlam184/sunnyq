@@ -7,7 +7,6 @@ import {
   DialogTitle,
 } from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { useGeneralStateStore } from '@/store/GeneralStateStore';
 import { ModalContentType } from '@/src/lib/type';
 
 export default function Modal(props: {
