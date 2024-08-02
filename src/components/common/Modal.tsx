@@ -15,12 +15,6 @@ export default function Modal(props: {
   setIsOpen: (param: boolean) => void;
   contentState: ModalContentType;
 }) {
-  //   const {
-  //     general_modalIsOpenedState,
-  //     general_modalContentState,
-  //     setGeneral_ModalIsOpenedState,
-  //   } = useGeneralStateStore();
-
   return (
     <Dialog
       open={props.isOpened}
