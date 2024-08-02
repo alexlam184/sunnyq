@@ -9,6 +9,8 @@ import { usePageStateStore } from '@/store/PageStateStroe';
 import { socket } from '@/src/lib/socket/socketio.service';
 import { useLobbyStore } from '@/store/LobbyStore';
 import { useRoomStore } from '@/store/RoomStore';
+import Modal from '@/src/components/common/Modal';
+import { useGeneralStateStore } from '@/store/GeneralStateStore';
 
 const renderSwitch = (param: PAGESTATE) => {
   switch (param) {
@@ -27,8 +29,22 @@ export default function HostPage() {
   const { pageState } = usePageStateStore();
   const { resetLobby } = useLobbyStore();
   const { addUser, setRoom } = useRoomStore();
+  const {
+    general_modalIsOpenedState,
+    setGeneral_ModalIsOpenedState,
+    general_modalContentState,
+    setGeneral_ModalContentState,
+  } = useGeneralStateStore();
 
   useEffect(() => {
+    if (!socket.connected) {
+      setGeneral_ModalContentState(
+        'No socket.io connection',
+        `Something went wrong. Please check socket.io`
+      );
+      setGeneral_ModalIsOpenedState(true);
+    }
+
     resetLobby();
 
     //Subscribe Room Fetching Event
@@ -44,6 +60,11 @@ export default function HostPage() {
           console.log(
             `Invalid room fetching with item:${requestCommand} ${requestItem}`
           );
+          setGeneral_ModalContentState(
+            'Invalid room',
+            `Invalid room fetching with item:${requestCommand} ${requestItem}`
+          );
+          setGeneral_ModalIsOpenedState(true);
       }
     });
 
@@ -57,6 +78,11 @@ export default function HostPage() {
     <div className='min-h-screen'>
       <title>Host page</title>
       {renderSwitch(pageState)}
+      <Modal
+        isOpened={general_modalIsOpenedState}
+        setIsOpen={setGeneral_ModalIsOpenedState}
+        contentState={general_modalContentState}
+      />
     </div>
   );
 }

@@ -15,10 +15,13 @@
     "check-all": "yarn check-format && yarn check-types && yarn lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.2",
+    "@heroicons/react": "^2.1.5",
     "@socket.io/admin-ui": "^0.5.1",
     "clsx": "^2.1.1",
     "eslint-config-prettier": "^9.1.0",
     "framer-motion": "^11.1.9",
+    "heroicons": "^2.1.5",
     "immer": "^10.1.1",
     "lint-staged": "^15.2.2",
     "next": "14.2.3",

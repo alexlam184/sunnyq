@@ -56,3 +56,8 @@ export enum CHOICE {
   C = 'C',
   D = 'D',
 }
+
+export type ModalContentType = {
+  title: string;
+  content: string;
+};

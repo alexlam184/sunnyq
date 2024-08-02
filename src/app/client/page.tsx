@@ -7,6 +7,8 @@ import { useLobbyStore } from '@/store/LobbyStore';
 import React, { useEffect } from 'react';
 import { useRoomStore } from '@/store/RoomStore';
 import ClientRoom from '@/src/components/client/ClientRoom';
+import Modal from '@/src/components/common/Modal';
+import { useGeneralStateStore } from '@/store/GeneralStateStore';
 
 const renderSwitch = (param: PAGESTATE) => {
   switch (param) {
@@ -23,8 +25,21 @@ export default function ClientPage() {
   const { pageState, resetPageState } = usePageStateStore();
   const { resetLobby } = useLobbyStore();
   const { addUser, setRoom, resetRoom } = useRoomStore();
+  const {
+    general_modalIsOpenedState,
+    setGeneral_ModalIsOpenedState,
+    general_modalContentState,
+    setGeneral_ModalContentState,
+  } = useGeneralStateStore();
 
   useEffect(() => {
+    if (!socket.connected) {
+      setGeneral_ModalContentState(
+        'No socket.io connection',
+        `Something went wrong. Please check socket.io`
+      );
+      setGeneral_ModalIsOpenedState(true);
+    }
     resetLobby();
 
     //Subscribe Room Fetching Event
@@ -57,6 +72,11 @@ export default function ClientPage() {
     <div className='min-h-screen'>
       <title>Client page</title>
       {renderSwitch(pageState)}
+      <Modal
+        isOpened={general_modalIsOpenedState}
+        setIsOpen={setGeneral_ModalIsOpenedState}
+        contentState={general_modalContentState}
+      />
     </div>
   );
 }
