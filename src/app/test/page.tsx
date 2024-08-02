@@ -32,6 +32,13 @@ export default function HostPage() {
     setStartIndex(startindex + dataCount);
   };
 
+  const [input, setInput] = useState('');
+
+  const onChangeHandler = (e: any) => {
+    setInput(e.target.value);
+    socket.emit('input-change', e.target.value);
+  };
+
   return (
     <section className='bg-slate-100'>
       <div className='mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center'>
@@ -67,6 +74,13 @@ export default function HostPage() {
               }}
               buttonType='base'
               themeColor='red'
+            />
+          </div>
+          <div className='mt-8 flex flex-wrap justify-center gap-4'>
+            <input
+              placeholder='Type something'
+              value={input}
+              onChange={onChangeHandler}
             />
           </div>
         </div>
