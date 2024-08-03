@@ -38,13 +38,6 @@ export default function HostPage() {
 
   useEffect(() => {
     resetLobby();
-    if (!socket.connected) {
-      setGeneral_ModalContentState(
-        'No socket.io connection',
-        `Something went wrong. Please check socket.io`
-      );
-      setGeneral_ModalIsOpenedState(true);
-    }
 
     //Subscribe Room Fetching Event
     socket.on(MESSAGE.FETCH_REQUEST, (requestCommand, requestItem) => {
