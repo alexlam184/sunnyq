@@ -52,6 +52,11 @@ export default function ClientPage() {
           console.log(
             `Invalid room fetching with item:${requestCommand} ${requestItem}`
           );
+          setGeneral_ModalContentState(
+            'Invalid room',
+            `Invalid room fetching with item:${requestCommand} ${requestItem}`
+          );
+          setGeneral_ModalIsOpenedState(true);
       }
     });
 
@@ -60,16 +65,6 @@ export default function ClientPage() {
       socket.off(MESSAGE.FETCH_REQUEST);
     };
   }, [addUser, resetLobby, resetPageState, resetRoom, setRoom]);
-
-  useEffect(() => {
-    if (!socket.connected) {
-      setGeneral_ModalContentState(
-        'No socket.io connection',
-        `Something went wrong. Please check socket.io`
-      );
-      setGeneral_ModalIsOpenedState(true);
-    }
-  }, [socket.connected]);
 
   return (
     <div className='min-h-screen'>

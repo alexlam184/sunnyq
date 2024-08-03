@@ -9,6 +9,7 @@ export enum MESSAGE {
   CONNECTION = 'connection',
   CONNECT = 'connect',
   DISCONNECT = 'disconnect',
+  CONNECTION_ERROR = 'connect_error',
 
   FETCH_USERID = 'user:fetch-id',
 

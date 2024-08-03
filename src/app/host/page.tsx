@@ -38,6 +38,13 @@ export default function HostPage() {
 
   useEffect(() => {
     resetLobby();
+    if (!socket.connected) {
+      setGeneral_ModalContentState(
+        'No socket.io connection',
+        `Something went wrong. Please check socket.io`
+      );
+      setGeneral_ModalIsOpenedState(true);
+    }
 
     //Subscribe Room Fetching Event
     socket.on(MESSAGE.FETCH_REQUEST, (requestCommand, requestItem) => {
@@ -65,16 +72,6 @@ export default function HostPage() {
       socket.off(MESSAGE.FETCH_REQUEST);
     };
   }, [addUser, resetLobby, setRoom]);
-
-  useEffect(() => {
-    if (!socket.connected) {
-      setGeneral_ModalContentState(
-        'No socket.io connection',
-        `Something went wrong. Please check socket.io`
-      );
-      setGeneral_ModalIsOpenedState(true);
-    }
-  }, [socket.connected]);
 
   return (
     <div className='min-h-screen'>
