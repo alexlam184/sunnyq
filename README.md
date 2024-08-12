@@ -1,4 +1,4 @@
-[![MIT License](https://img.shields.io/github/license/alexlam184/sunnyq)](https://github.com/alexlam184/portfolio/blob/master/LICENSE)
+[![MIT License](https://img.shields.io/github/license/alexlam184/sunnyq)](https://github.com/alexlam184/sunnyq/blob/master/LICENSE)
 
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
