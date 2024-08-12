@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+// @ts-expect-error
 import { ReactLenis } from 'lenis/dist/lenis-react';
 import {
   motion,
