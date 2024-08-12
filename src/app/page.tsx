@@ -1,43 +1,33 @@
-import Image from 'next/image';
+'use client';
 import Link from 'next/link';
+import { ReactLenis } from 'lenis/dist/lenis-react';
+import {
+  motion,
+  useMotionTemplate,
+  useScroll,
+  useTransform,
+} from 'framer-motion';
+import { SiSpacex } from 'react-icons/si';
+import { FiArrowRight, FiMapPin } from 'react-icons/fi';
+import { useRef } from 'react';
 
 export default function Home() {
   return (
     <main className='flex min-h-screen flex-col items-center justify-between p-24'>
-      <div className='z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex'>
-        <p className='fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30'>
-          Get started by editing&nbsp;
-          <code className='font-mono font-bold'>src/app/page.tsx</code>
-        </p>
-        <div className='fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none'>
-          <a
-            className='pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0'
-            href='https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            By{' '}
-            <Image
-              src='/vercel.svg'
-              alt='Vercel Logo'
-              className='dark:invert'
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert'
-          src='/next.svg'
-          alt='Next.js Logo'
-          width={180}
-          height={37}
-          priority
-        />
+      <div className='bg-zinc-950'>
+        <ReactLenis
+          root
+          options={{
+            // Learn more -> https://github.com/darkroomengineering/lenis?tab=readme-ov-file#instance-settings
+            lerp: 0.05,
+            //   infinite: true,
+            //   syncTouch: true,
+          }}
+        >
+          <Nav />
+          <Hero />
+          <Schedule />
+        </ReactLenis>
       </div>
 
       <div className='mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left'>
@@ -101,3 +91,225 @@ export default function Home() {
     </main>
   );
 }
+
+const Nav = () => {
+  return (
+    <nav className='fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-3 text-white'>
+      <div className='flex flex-row items-center'>
+        <SiSpacex className='text-3xl mix-blend-difference' />
+        <span>SunnyQ</span>
+      </div>
+      <Link
+        href='/host'
+        className='flex items-center gap-1 text-xs text-zinc-400'
+        target='_blank'
+      >
+        HOST
+      </Link>
+      <Link
+        href='/client'
+        className='flex items-center gap-1 text-xs text-zinc-400'
+        target='_blank'
+      >
+        CLIENT
+      </Link>
+      <Link
+        href='/test'
+        className='flex items-center gap-1 text-xs text-zinc-400'
+        target='_blank'
+      >
+        TEST
+      </Link>
+      <button
+        onClick={() => {
+          document.getElementById('launch-schedule')?.scrollIntoView({
+            behavior: 'smooth',
+          });
+        }}
+        className='flex items-center gap-1 text-xs text-zinc-400'
+      >
+        CREDIT <FiArrowRight />
+      </button>
+    </nav>
+  );
+};
+
+const SECTION_HEIGHT = 1500;
+
+const Hero = () => {
+  return (
+    <div
+      style={{ height: `calc(${SECTION_HEIGHT}px + 100vh)` }}
+      className='relative w-full'
+    >
+      <CenterImage />
+
+      <ParallaxImages />
+
+      <div className='absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-zinc-950/0 to-zinc-950' />
+    </div>
+  );
+};
+
+const CenterImage = () => {
+  const { scrollY } = useScroll();
+
+  const clip1 = useTransform(scrollY, [0, 1500], [25, 0]);
+  const clip2 = useTransform(scrollY, [0, 1500], [75, 100]);
+
+  const clipPath = useMotionTemplate`polygon(${clip1}% ${clip1}%, ${clip2}% ${clip1}%, ${clip2}% ${clip2}%, ${clip1}% ${clip2}%)`;
+
+  const backgroundSize = useTransform(
+    scrollY,
+    [0, SECTION_HEIGHT + 500],
+    ['170%', '100%']
+  );
+  const opacity = useTransform(
+    scrollY,
+    [SECTION_HEIGHT, SECTION_HEIGHT + 500],
+    [1, 0]
+  );
+
+  return (
+    <motion.div
+      className='sticky top-0 h-screen w-full'
+      style={{
+        clipPath,
+        backgroundSize,
+        opacity,
+        backgroundImage:
+          'url(https://images.unsplash.com/photo-1460186136353-977e9d6085a1?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    />
+  );
+};
+
+const ParallaxImages = () => {
+  return (
+    <div className='mx-auto max-w-5xl px-4 pt-[200px]'>
+      <ParallaxImg
+        src='https://images.unsplash.com/photo-1484600899469-230e8d1d59c0?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+        alt='And example of a space launch'
+        start={-200}
+        end={200}
+        className='w-1/3'
+      />
+      <ParallaxImg
+        src='https://images.unsplash.com/photo-1446776709462-d6b525c57bd3?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+        alt='An example of a space launch'
+        start={200}
+        end={-250}
+        className='mx-auto w-2/3'
+      />
+      <ParallaxImg
+        src='https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+        alt='Orbiting satellite'
+        start={-200}
+        end={200}
+        className='ml-auto w-1/3'
+      />
+      <ParallaxImg
+        src='https://images.unsplash.com/photo-1494022299300-899b96e49893?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+        alt='Orbiting satellite'
+        start={0}
+        end={-500}
+        className='ml-24 w-5/12'
+      />
+    </div>
+  );
+};
+
+const ParallaxImg = ({
+  className,
+  alt,
+  src,
+  start,
+  end,
+}: {
+  className: string;
+  alt: string;
+  src: string;
+  start: number;
+  end: number;
+}) => {
+  const ref = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: [`${start}px end`, `end ${end * -1}px`],
+  });
+
+  const opacity = useTransform(scrollYProgress, [0.75, 1], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0.75, 1], [1, 0.85]);
+
+  const y = useTransform(scrollYProgress, [0, 1], [start, end]);
+  const transform = useMotionTemplate`translateY(${y}px) scale(${scale})`;
+
+  return (
+    <motion.img
+      src={src}
+      alt={alt}
+      className={className}
+      ref={ref}
+      style={{ transform, opacity }}
+    />
+  );
+};
+
+const Schedule = () => {
+  return (
+    <section
+      id='launch-schedule'
+      className='mx-auto max-w-5xl px-4 py-48 text-white'
+    >
+      <motion.h1
+        initial={{ y: 48, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        transition={{ ease: 'easeInOut', duration: 0.75 }}
+        className='mb-20 text-4xl font-black uppercase text-zinc-50'
+      >
+        Credit
+      </motion.h1>
+      <ScheduleItem
+        developerName='Alex Lam'
+        date='Dec 9th'
+        location='Hong Kong'
+      />
+      <ScheduleItem
+        developerName='Winter Lau'
+        date='Dec 20th'
+        location='Hong Kong'
+      />
+    </section>
+  );
+};
+
+const ScheduleItem = ({
+  developerName,
+  date,
+  location,
+}: {
+  developerName: string;
+  date: string;
+  location: string;
+}) => {
+  return (
+    <motion.div
+      initial={{ y: 48, opacity: 0 }}
+      whileInView={{ y: 0, opacity: 1 }}
+      transition={{ ease: 'easeInOut', duration: 0.75 }}
+      className='mb-9 flex items-center justify-between border-b border-zinc-800 px-3 pb-9'
+    >
+      <div>
+        <p className='mb-1.5 text-xl text-zinc-50'>{developerName}</p>
+        <p className='text-sm uppercase text-zinc-500'>{date}</p>
+      </div>
+      <div className='flex items-center gap-1.5 text-end text-sm uppercase text-zinc-500'>
+        <p>{location}</p>
+        <FiMapPin />
+      </div>
+    </motion.div>
+  );
+};
