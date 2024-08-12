@@ -1,4 +1,4 @@
-[![MIT License](https://img.shields.io/github/license/alexlam184/portfolio)](https://github.com/alexlam184/portfolio/blob/master/LICENSE)
+[![MIT License](https://img.shields.io/github/license/alexlam184/sunnyq)](https://github.com/alexlam184/portfolio/blob/master/LICENSE)
 
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -11,7 +11,7 @@ SunnyQ is an online quiz platform that enables teachers to host quizzes and shar
 ## Features
 
 - Online Quiz created by host
-- Data anaylst 
+- Data anaylst
 
 ## Installation
 
@@ -97,10 +97,12 @@ only use `lg:` is ok,the rest will be marked as small screen
 
 # License & Copyright
 
-[MIT](https://github.com/alexlam184/portfolio/blob/master/LICENSE)
+[MIT](https://github.com/alexlam184/sunnyq/blob/master/LICENSE)
+
+Developed By:
+
+Alex Lam [Github](https://github.com/alexlam184/)
+
+Winter Lau [Github](https://github.com/listenrwt)
 
 _2024-08-12_
-
-Developed By
-Alex Lam [Github](https://github.com/alexlam184/)
-Winter Lau [Github](https://github.com/listenrwt)
