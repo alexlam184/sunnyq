@@ -1,7 +1,7 @@
 import { QUESTION } from '@/src/lib/type';
 import { useRoomStore } from '@/store/RoomStore';
 import Button from '../ui/Button';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Tabs from '../ui/Tabs';
 import { TabOption } from '../ui/Tabs';
 import Statistics from '../common/Statistics';
@@ -10,6 +10,7 @@ import { MESSAGE } from '@/src/lib/enum';
 import { usePageStateStore } from '@/store/PageStateStroe';
 import { ROOM_PHASE } from '@/src/lib/room-phase';
 import { useForceUpdate } from '@/src/hook/useForceUpdate';
+import { useQRCode } from 'next-qrcode';
 
 /**
  * Define the Tab options
@@ -135,6 +136,13 @@ export default function HostRoom() {
     forceUpdate(room.phase);
   };
 
+  /**
+   * Handle QR Code Generation
+   */
+  const { Canvas } = useQRCode();
+  //const url = process.env.NEXT_PUBLIC_SOCKETIO_HOSTNAME + ':' + process.env.NEXT_PUBLIC_SOCKETIO_PORT + '/client?roomcode=' + room.roomCode;
+  const url = 'http://' + '192.168.169.137' + ':' + '3000' + '/client?roomcode=' + room.roomCode;
+
   return (
     <div className='flex min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 text-gray-800 p-8 flex-col md:flex-row'>
       <div className='w-full md:w-80 flex flex-col order-1'>
@@ -152,6 +160,17 @@ export default function HostRoom() {
               {room.roomCode}
             </span>
           </p>
+          <div className='content-center'>
+            <Canvas
+              text={url}
+              options={{
+                errorCorrectionLevel: 'M',
+                margin: 3,
+                scale: 4,
+                width: 200,
+              }}
+            />
+          </div>
         </div>
 
         {/* Player List Field */}

@@ -1,12 +1,13 @@
 'use client';
 import { choice, CHOICE, QUESTION } from '@/src/lib/type';
 import { useRoomStore } from '@/store/RoomStore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '../ui/Button';
 import { socket } from '@/src/lib/socket/socketio.service';
 import { MESSAGE } from '@/src/lib/enum';
 import TextAreaField from '../ui/TextAreaField';
 import { ROOM_PHASE } from '@/src/lib/room-phase';
+import { useRouter } from 'next/navigation';
 
 export default function ClientRoom() {
   const { username, userid, room } = useRoomStore();
@@ -39,6 +40,11 @@ export default function ClientRoom() {
     setSubmitted(true);
     setReminded(false);
   };
+
+  const router = useRouter();
+  useEffect(()=>{
+    router.push('/client?roomcode=' + room.roomCode);
+  },[])
 
   return (
     <div className='flex min-h-screen bg-gradient-to-b from-green-100 to-green-200 text-gray-800 p-8 flex-col md:flex-row'>
