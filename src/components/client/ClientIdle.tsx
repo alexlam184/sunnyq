@@ -21,19 +21,19 @@ export default function ClientIdle() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const roomCodeParam = searchParams.get('roomcode');
-  useEffect(()=>{
-    if(!roomCodeParam) return;
+  useEffect(() => {
+    if (!roomCodeParam) return;
     socket.emit(MESSAGE.FETCH_LOBBY, (lobby: string[]) => {
       // Fetch Lobby
       setLobby(lobby);
-      if(!hasRoom(roomCodeParam || '')) {
+      if (!hasRoom(roomCodeParam || '')) {
         router.push('/client');
-      }else {
+      } else {
         setRoomCode(roomCodeParam);
         setHasRoomCodeParam(true);
       }
     });
-  },[roomCodeParam])
+  }, [roomCodeParam]);
 
   const handleJoinClick = () => {
     socket.emit(MESSAGE.FETCH_LOBBY, (lobby: string[]) => {
@@ -90,16 +90,17 @@ export default function ClientIdle() {
               }}
             />
           </div>
-          {!hasRoomCodeParam &&           
-          <div className='flex items-center justify-center'>
-            <InputField
-              type='text'
-              title='room code'
-              onChange={(e) => {
-                setRoomCode(e.target.value);
-              }}
-            />
-          </div>}
+          {!hasRoomCodeParam && (
+            <div className='flex items-center justify-center'>
+              <InputField
+                type='text'
+                title='room code'
+                onChange={(e) => {
+                  setRoomCode(e.target.value);
+                }}
+              />
+            </div>
+          )}
           <div className='mt-8 flex flex-wrap justify-center gap-4'>
             <Button
               buttonText='Join Room'
