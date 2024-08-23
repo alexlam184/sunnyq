@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { UseFormSetValue } from 'react-hook-form';
 
 export interface TabOption {
   label: string;
@@ -6,13 +7,15 @@ export interface TabOption {
 }
 
 interface TabProps {
+  name?: string | '';
   options: TabOption[];
-  onChange: (selectedOption: TabOption) => void;
+  onChange?: ((selectedOption: TabOption) => void) | undefined;
   defaultValue?: any;
   disabledValues?: any[];
 }
 
 const TabComponent: React.FC<TabProps> = ({
+  name,
   options,
   onChange,
   defaultValue,
@@ -32,10 +35,12 @@ const TabComponent: React.FC<TabProps> = ({
           disabledValues?.includes(option.value) || false;
         return (
           <button
+            name={name}
+            type={undefined}
             key={index}
-            onClick={() => {
+            onClick={(e) => {
               setSelectedOption(option);
-              onChange(option);
+              onChange && onChange(option);
             }}
             className={`inline-flex items-center h-10 px-4 text-lg text-center ${
               disabled

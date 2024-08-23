@@ -3,7 +3,7 @@ import { usePageStateStore } from '@/store/PageStateStroe';
 import { PAGESTATE, MESSAGE } from '@/src/lib/enum';
 import { useRoomStore } from '@/store/RoomStore';
 import { useLobbyStore } from '@/store/LobbyStore';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useCallback, useEffect, useState } from 'react';
 import InputField from '../ui/InputField';
 import Button from '../ui/Button';
 import TextAreaField from '../ui/TextAreaField';
@@ -17,41 +17,107 @@ import {
   choice,
   OpenEndQuestion,
 } from '@/src/lib/type';
-import { useImmer } from 'use-immer';
 import Tabs, { TabOption } from '../ui/Tabs';
+import CollapsibleSection from '../ui/CollapsibleSection';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
-const HostCreateRoom = () => {
-  // use Zustand Stores
-  const { setPageState } = usePageStateStore();
-  const { setRoom, username, setUsername } = useRoomStore();
-  const { createRoom, addRoomCode, setLobby } = useLobbyStore();
-
-  const [question, updateQuestion] = useImmer<BaseQuestion>({
-    type: QUESTION.MultipleChoice,
-    question:
-      'Which of the following programming languages is primarily used for building web applications?',
-    remark:
-      "Remember the acronym 'JS' which stands for JavaScript, as it is the go-to language for web application development due to its versatility and widespread support in browsers.",
-  });
-
-  const [choices, updateChoices] = useImmer<choice[]>([
+/**
+ * Question Templates
+ */
+const sampleQuestion: BaseQuestion = {
+  type: QUESTION.MultipleChoice,
+  question:
+    'Which of the following programming languages is primarily used for building web applications?',
+  remark:
+    "Remember the acronym 'JS' which stands for JavaScript, as it is the go-to language for web application development due to its versatility and widespread support in browsers.",
+  choices: [
     { value: CHOICE.A, content: 'Python' },
     { value: CHOICE.B, content: 'Java' },
     { value: CHOICE.C, content: 'JavaScript' },
     { value: CHOICE.D, content: 'C++' },
-  ]);
+  ],
+  answer: CHOICE.C,
+};
 
-  const [choiceAnswer, setChoiceAnswer] = useState<CHOICE>(CHOICE.C);
-  const [textAnswer, setTextAnswer] = useState<string>('JavaScript');
+const emptyQuestion: BaseQuestion = {
+  type: QUESTION.MultipleChoice,
+  question: '',
+  remark: '',
+  choices: [
+    { value: CHOICE.A, content: '' },
+    { value: CHOICE.B, content: '' },
+    { value: CHOICE.C, content: '' },
+    { value: CHOICE.D, content: '' },
+  ],
+  answer: undefined,
+};
 
-  const selectedOptions: SelectOption[] = useMemo(() => {
-    return [
-      { value: CHOICE.A, label: 'A' },
-      { value: CHOICE.B, label: 'B' },
-      { value: CHOICE.C, label: 'C' },
-      { value: CHOICE.D, label: 'D' },
-    ];
-  }, []);
+const HostCreateRoom = () => {
+  /**
+   * Zustand Stores
+   */
+  const { setPageState } = usePageStateStore();
+  const { setRoom, username, setUsername } = useRoomStore();
+  const { createRoom, addRoomCode, setLobby } = useLobbyStore();
+
+  /**
+   * Handle Form
+   */
+  const validationSchema = yup.object().shape({
+    username: yup.string().required('Username is required'),
+    questions: yup.array().of(
+      yup.object().shape({
+        type: yup.string().required('Type is required'),
+        question: yup.string().required('Question is required'),
+        remark: yup.string(),
+        choices: yup
+          .array()
+          .of(
+            yup.object().shape({ value: yup.string(), content: yup.string() })
+          ),
+        answer: yup.string(),
+      })
+    ),
+  });
+  const formOptions = { resolver: yupResolver(validationSchema) };
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState,
+    watch,
+    setValue,
+    getValues,
+  } = useForm(formOptions);
+  const { errors } = formState;
+  const { fields, append, remove } = useFieldArray({
+    name: 'questions',
+    control,
+  });
+  const handleAppendField = () => {
+    append(sampleQuestion);
+  };
+  const handleRemoveField = (index: number) => {
+    remove(index);
+  };
+  const onFormSubmit = (data: any) => {
+    setUsername(data.username);
+  };
+  const questions = watch('questions');
+
+  /**
+   * Handle Room Events
+   */
+  // Change Page after room is initiated
+  const { room } = useRoomStore();
+  const [canChangePage, setCanChangePage] = useState(false);
+  useEffect(() => {
+    if (!canChangePage) return;
+    setPageState(PAGESTATE.inGame);
+  }, [room]);
 
   const handleCreateRoom = () => {
     socket.emit(MESSAGE.FETCH_LOBBY, (lobby: string[]) => {
@@ -65,77 +131,57 @@ const HostCreateRoom = () => {
         // Update Host
         room.host = { userid: userid, username: username };
 
-        // Create a question object based on its type
-        const createQuestionObject = (): BaseQuestion => {
-          switch (question.type) {
-            case QUESTION.OpenEnd:
-              return question as OpenEndQuestion;
-            case QUESTION.MultipleChoice:
-              return {
-                ...question,
-                choices: choices,
-                answer: choiceAnswer,
-              } as MultipleChoiceQuestion;
-            case QUESTION.TextInput:
-              return {
-                ...question,
-                answer: textAnswer,
-              } as TextInputQuestion;
-            default:
-              return question;
-          }
-        };
         // Update Question
-        room.question = createQuestionObject();
+        room.questions = questions as BaseQuestion[];
 
         // Upload to Server
         socket.emit(MESSAGE.CREATE_ROOM, {
           roomCode: room.roomCode,
           room: room,
         });
-
         // Update Local
         setLobby(lobby);
         addRoomCode(room.roomCode);
         setRoom(room);
       });
-      // Change page
-      setPageState(PAGESTATE.inGame);
     });
+    setCanChangePage(true);
   };
-
   const handleBack = () => {
     // Change page
     setPageState(PAGESTATE.front);
   };
 
-  const BaseQuestionField = useCallback(() => {
-    return (
-      <>
-        <TextAreaField
-          title='Question'
-          rows={3}
-          onChange={(e) => {
-            updateQuestion((draft) => {
-              draft.question = e.target.value;
-            });
-          }}
-          defaultValue={question.question}
-        />
-        <TextAreaField
-          title='Remark'
-          rows={2}
-          onChange={(e) => {
-            updateQuestion((draft) => {
-              draft.remark = e.target.value;
-            });
-          }}
-          defaultValue={question.remark}
-        />
-      </>
-    );
-  }, [question.question, question.remark, updateQuestion]);
+  /**
+   * Handle Question and Remark Field
+   */
+  const BaseQuestionField = useCallback(
+    ({ index }: { index: number }) => {
+      return (
+        <>
+          <TextAreaField
+            name={`questions.${index}.question`}
+            register={register}
+            registerName={`questions.${index}.question`}
+            title='Question'
+            rows={3}
+          />
+          <TextAreaField
+            name={`questions.${index}.remark`}
+            register={register}
+            registerName={`questions.${index}.remark`}
+            title='Remark'
+            rows={2}
+          />
+        </>
+      );
+    },
+    [register]
+  );
 
+  /**
+   * Handle Question Type Selection Field
+   */
   const tabOptions: TabOption[] = useMemo(() => {
     return [
       { value: QUESTION.MultipleChoice, label: QUESTION.MultipleChoice },
@@ -143,87 +189,87 @@ const HostCreateRoom = () => {
       { value: QUESTION.OpenEnd, label: QUESTION.OpenEnd },
     ];
   }, []);
+  const TypeChoosingField = useCallback(
+    ({ index }: { index: number }) => {
+      return (
+        <Tabs
+          onChange={(option: TabOption) => {
+            register(`questions.${index}.type`, option.value);
+            setValue(`questions.${index}.type`, option.value);
+          }}
+          options={tabOptions}
+          defaultValue={sampleQuestion.type}
+        />
+      );
+    },
+    [register, tabOptions]
+  );
 
-  const TypeChoosingField = useCallback(() => {
-    return (
-      <Tabs
-        options={tabOptions}
-        onChange={(option) => {
-          updateQuestion((draft) => {
-            draft.type = option.value;
-          });
-        }}
-        defaultValue={question.type}
-      />
-    );
-  }, [question.type, tabOptions, updateQuestion]);
-
-  const MultipleChoiceField = useCallback(() => {
-    return (
-      <>
-        {choices.map((choice, index) => {
-          if (index % 2 !== 0) return null;
-          const nextChoice = choices[index + 1];
-
-          return (
-            <div
-              key={index}
-              className='flex space-x-1 items-center justify-start'
-            >
-              <TextAreaField
-                title={choice.value}
-                rows={3}
-                onChange={(e) =>
-                  updateChoices((draft) => {
-                    draft[index].content = e.target.value;
-                  })
-                }
-                defaultValue={choice.content}
-              />
-              {nextChoice && (
+  /**
+   * Handle MC Question Answer Field
+   */
+  const selectedOptions: SelectOption[] = useMemo(() => {
+    return [
+      { value: CHOICE.A, label: 'A' },
+      { value: CHOICE.B, label: 'B' },
+      { value: CHOICE.C, label: 'C' },
+      { value: CHOICE.D, label: 'D' },
+    ];
+  }, []);
+  const MultipleChoiceField = useCallback(
+    ({ index }: { index: number }) => {
+      return (
+        <>
+          <div className='grid grid-cols-2 gap-2'>
+            {selectedOptions.map((choice, choiceIndex) => {
+              return (
                 <TextAreaField
-                  title={nextChoice.value}
+                  key={choice.label}
+                  name={`questions.${index}.choices.${choiceIndex}.content`}
+                  register={register}
+                  registerName={`questions.${index}.choices.${choiceIndex}.content`}
+                  title={choice.label}
                   rows={3}
-                  onChange={(e) =>
-                    updateChoices((draft) => {
-                      draft[index + 1].content = e.target.value;
-                    })
-                  }
-                  defaultValue={nextChoice.content}
                 />
-              )}
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+          <div className='flex items-center justify-end space-x-5'>
+            <label className='text-black'>Correct Answer</label>
+            <Select
+              name={`questions.${index}.answer`}
+              register={register}
+              registerName={`questions.${index}.answer`}
+              options={selectedOptions}
+            />
+          </div>
+        </>
+      );
+    },
+    [selectedOptions, register]
+  );
 
-        <div className='flex items-center justify-end space-x-5'>
-          <label className='text-black'>Correct Answer</label>
-          <Select
-            name='MC'
-            options={selectedOptions}
-            onChange={(e) => {
-              setChoiceAnswer(e.target.value as CHOICE);
-            }}
-            defaultValue={choiceAnswer}
-          />
-        </div>
-      </>
-    );
-  }, [choiceAnswer, choices, selectedOptions, updateChoices]);
+  /**
+   * Handle Text Input Question Answer Field
+   */
+  const TextInputField = useCallback(
+    ({ index }: { index: number }) => {
+      return (
+        <TextAreaField
+          name={`questions.${index}.answer`}
+          register={register}
+          registerName={`questions.${index}.answer`}
+          title='Answer'
+          rows={3}
+        />
+      );
+    },
+    [register]
+  );
 
-  const TextInputField = useCallback(() => {
-    return (
-      <TextAreaField
-        title='Answer'
-        rows={3}
-        onChange={(e) => {
-          setTextAnswer(e.target.value);
-        }}
-        defaultValue={textAnswer}
-      />
-    );
-  }, [textAnswer]);
-
+  /**
+   * Handle OpenEnd Question Answer Field
+   */
   const OpenEndField = () => {
     return null;
   };
@@ -231,38 +277,64 @@ const HostCreateRoom = () => {
   return (
     <section className='bg-slate-100'>
       <div className='min-h-screen mx-auto max-w-screen-xl px-4 py-10 lg:py-32 lg:flex lg:items-start'>
-        <div className='mx-auto max-w-xl'>
+        <form
+          onSubmit={handleSubmit(onFormSubmit)}
+          className='mx-auto max-w-xl'
+        >
           <h1 className='text-3xl font-extrabold sm:text-5xl text-black'>
             Room Creator 🦑
           </h1>
           <p className='mt-4 mb-2 leading-relaxed text-gray-500'>
             Design and build a room
           </p>
-          <div className='my-2 flex-wrap gap-4 justify-center space-y-3'>
-            <InputField
-              type='text'
-              title='Name'
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
-              defaultValue={username}
-            />
-            <BaseQuestionField />
-            <TypeChoosingField />
+          <InputField
+            name={`username`}
+            register={register}
+            registerName={`username`}
+            type='text'
+            title='Name'
+            defaultValue={username}
+          />
+          <div className='flex flex-col items-center justify-center space-y-2 mt-2 lg:min-w-[472px]'>
+            {fields.length > 0 &&
+              fields.map((field, index) => (
+                <CollapsibleSection
+                  key={field.id || index}
+                  title={`Question ${index + 1}`}
+                  deleteAction={() => handleRemoveField(index)}
+                >
+                  <div className='my-2 flex-wrap gap-4 justify-center space-y-3'>
+                    <TypeChoosingField index={index} />
+                    <BaseQuestionField index={index} />
+                    {questions && questions[index] ? (
+                      questions[index].type === QUESTION.MultipleChoice ? (
+                        <MultipleChoiceField index={index} />
+                      ) : questions[index].type === QUESTION.TextInput ? (
+                        <TextInputField index={index} />
+                      ) : questions[index].type === QUESTION.OpenEnd ? (
+                        <OpenEndField />
+                      ) : null
+                    ) : null}
+                  </div>
+                </CollapsibleSection>
+              ))}
           </div>
-          {question.type === QUESTION.MultipleChoice ? (
-            <MultipleChoiceField />
-          ) : question.type === QUESTION.TextInput ? (
-            <TextInputField />
-          ) : question.type === QUESTION.OpenEnd ? (
-            <OpenEndField />
-          ) : null}
+          <div className='p-2 flex justify-center'>
+            <Button
+              buttonText='Add Question'
+              onClick={handleAppendField}
+              buttonType='border'
+              themeColor='blue'
+            />
+          </div>
           <div className='mt-8 flex flex-wrap gap-4 justify-center'>
             <Button
-              buttonText='Create'
+              type='submit'
+              buttonText='Create Room'
               onClick={handleCreateRoom}
               buttonType='base'
               themeColor='blue'
+              disabled={fields.length <= 0}
             />
             <Button
               buttonText='Back'
@@ -271,7 +343,7 @@ const HostCreateRoom = () => {
               themeColor='blue'
             />
           </div>
-        </div>
+        </form>
       </div>
     </section>
   );

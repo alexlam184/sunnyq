@@ -11,6 +11,7 @@ import { usePageStateStore } from '@/store/PageStateStroe';
 import { ROOM_PHASE } from '@/src/lib/room-phase';
 import { useForceUpdate } from '@/src/hook/useForceUpdate';
 import { useQRCode } from 'next-qrcode';
+import Pagination from '../ui/Pagination';
 
 /**
  * Define the Tab options
@@ -23,8 +24,9 @@ enum TABS {
 export default function HostRoom() {
   const { room, resetRoom } = useRoomStore();
   const { resetPageState } = usePageStateStore();
-
   const { forceUpdate } = useForceUpdate();
+
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   /**
    * Define the tabs option
@@ -56,7 +58,7 @@ export default function HostRoom() {
                 </li>
                 <div
                   className={
-                    user.answer
+                    user.answers && user.answers[currentQuestionIndex]
                       ? `bg-blue-400 border border-blue-600 rounded-full w-5 h-5`
                       : `bg-gray-300 border border-gray-500 rounded-full w-5 h-5`
                   }
@@ -69,21 +71,24 @@ export default function HostRoom() {
         )}
       </div>
     );
-  }, [room.users, room.num_of_students]);
+  }, [room.users, room.num_of_students, currentQuestionIndex]);
 
   /**
    * The Component of the Answer List Tab
    */
   const AnswerList = useCallback(() => {
-    const answeredUsers = room.users.filter((user) => user.answer != null);
+    const answeredUsers = room.users.filter(
+      (user) => user.answers && user.answers[currentQuestionIndex] != null
+    );
     const getColorClass = (answer?: any) => {
-      switch (room.question.type) {
+      const currentQuestion = room.questions[currentQuestionIndex];
+      switch (currentQuestion.type) {
         case QUESTION.MultipleChoice:
-          if (answer && answer === room.question.answer)
+          if (answer && answer === currentQuestion.answer)
             return 'bg-green-50 border-green-200  hover:bg-green-100';
           else return 'bg-red-50 border-red-200  hover:bg-red-100';
         case QUESTION.TextInput:
-          if (answer && answer === room.question.answer)
+          if (answer && answer === currentQuestion.answer)
             return 'bg-green-50 border-green-200  hover:bg-green-100';
           else return 'bg-red-50 border-red-200  hover:bg-red-100';
         case QUESTION.OpenEnd:
@@ -92,17 +97,19 @@ export default function HostRoom() {
     };
     return (
       <div className='scroll-container overflow-y-auto h-[80vh] p-4 bg-white shadow-md rounded-lg border border-gray-300'>
-        {room.num_of_answered > 0 ? (
+        {answeredUsers.length > 0 ? (
           <ul className='space-y-2'>
             {answeredUsers.map((user, index) => (
               <li
-                className={`flex flex-col space-y-1 p-3 border rounded-lg transition ${getColorClass(user.answer)} max-w-[40vh]`}
+                className={`flex flex-col space-y-1 p-3 border rounded-lg transition ${getColorClass(user.answers && user.answers[currentQuestionIndex])} max-w-[40vh]`}
                 key={index}
               >
                 <span className='font-semibold text-lg text-gray-800'>
                   {index + 1}. {user.username}
                 </span>
-                <span className='text-md text-gray-600'>{user.answer}</span>
+                <span className='text-md text-gray-600'>
+                  {user.answers && user.answers[currentQuestionIndex]}
+                </span>
               </li>
             ))}
           </ul>
@@ -111,12 +118,7 @@ export default function HostRoom() {
         )}
       </div>
     );
-  }, [
-    room.users,
-    room.num_of_answered,
-    room.question.answer,
-    room.question.type,
-  ]);
+  }, [room.users, room.questions, currentQuestionIndex]);
 
   /**
    * Handle delete room event
@@ -140,8 +142,12 @@ export default function HostRoom() {
    * Handle QR Code Generation
    */
   const { Canvas } = useQRCode();
-  //const url = process.env.NEXT_PUBLIC_SOCKETIO_HOSTNAME + ':' + process.env.NEXT_PUBLIC_SOCKETIO_PORT + '/client?roomcode=' + room.roomCode;
-  const url = 'http://' + '192.168.169.137' + ':' + '3000' + '/client?roomcode=' + room.roomCode;
+  const url =
+    process.env.NEXT_PUBLIC_SOCKETIO_HOSTNAME +
+    ':' +
+    process.env.NEXT_PUBLIC_SOCKETIO_PORT +
+    '/client?roomcode=' +
+    room.roomCode;
 
   return (
     <div className='flex min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 text-gray-800 p-8 flex-col md:flex-row'>
@@ -160,7 +166,7 @@ export default function HostRoom() {
               {room.roomCode}
             </span>
           </p>
-          <div className='content-center'>
+          <div className='flex justify-center lg:justify-start'>
             <Canvas
               text={url}
               options={{
@@ -178,7 +184,12 @@ export default function HostRoom() {
           <div className='w-full flex justify-between items-center mb-4'>
             <h2 className='text-2xl font-bold text-blue-600'>Joined Players</h2>
             <span className='font-bold text-2xl px-2 bg-blue-100 text-blue-700 rounded-lg'>
-              {room.num_of_answered}/{room.num_of_students}
+              {
+                room.users.filter(
+                  (user) => user.answers && user.answers[currentQuestionIndex]
+                ).length
+              }
+              /{room.num_of_students}
             </span>
           </div>
           <PlayerList />
@@ -190,24 +201,48 @@ export default function HostRoom() {
         <h1 className='text-4xl font-bold mb-6 text-center text-blue-600'>
           Host Dashboard
         </h1>
-
         <div className='bg-gray-100 p-6 rounded-lg flex-grow'>
+          {/* Question Navigation */}
+          <div className='flex justify-center items-center mb-4'>
+            <span className='text-xl font-bold'>
+              Question {currentQuestionIndex + 1} of {room.questions.length}
+            </span>
+          </div>
+
           {/* Question and Remarks */}
-          <h2 className='text-2xl font-bold mb-4 text-blue-600'>Question</h2>
-          <p className='text-xl mb-2'>{room.question.question}</p>
-          <p className='text-sm text-gray-500 mb-4'>{room.question.remark}</p>
+          <h2 className='text-2xl font-bold mb-4 text-blue-600'>
+            Question {currentQuestionIndex + 1}
+          </h2>
+          <p className='text-xl mb-2'>
+            {room.questions[currentQuestionIndex].question}
+          </p>
+          <p className='text-sm text-gray-500 mb-4'>
+            {room.questions[currentQuestionIndex].remark}
+          </p>
 
           {/* Answer Field */}
-          {room.question.type === QUESTION.MultipleChoice && (
+          {room.questions[currentQuestionIndex].type ===
+            QUESTION.MultipleChoice && (
             <div className='space-y-4'>
-              {room.question.choices?.map((choice, index) => (
-                <div key={index} className='flex items-center text-lg'>
-                  <span className='font-semibold mr-2'>{choice.value}:</span>
-                  <span>{choice.content}</span>
-                </div>
-              ))}
+              {room.questions[currentQuestionIndex].choices?.map(
+                (choice, index) => (
+                  <div key={index} className='flex items-center text-lg'>
+                    <span className='font-semibold mr-2'>{choice.value}:</span>
+                    <span>{choice.content}</span>
+                  </div>
+                )
+              )}
             </div>
           )}
+
+          {/*Pagination*/}
+          <div className='pt-4'>
+            <Pagination
+              totalPages={room.questions.length}
+              currentIndex={currentQuestionIndex}
+              onPageChange={setCurrentQuestionIndex}
+            />
+          </div>
         </div>
 
         {/* Buttons */}
@@ -241,12 +276,21 @@ export default function HostRoom() {
           }}
           defaultValue={tab}
           disabledValues={
-            room.question.type === QUESTION.OpenEnd
+            room.questions[currentQuestionIndex].type === QUESTION.OpenEnd
               ? [TABS.Statistics]
               : undefined
           }
         />
-        {tab === TABS.Answers ? <AnswerList /> : <Statistics room={room} />}
+        {tab === TABS.Answers ? (
+          <AnswerList />
+        ) : (
+          <Statistics
+            num_of_answered={room.num_of_answered}
+            question={room.questions[currentQuestionIndex]}
+            users={room.users}
+            currentQuestionIndex={currentQuestionIndex}
+          />
+        )}
       </div>
     </div>
   );

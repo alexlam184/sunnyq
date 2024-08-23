@@ -5,7 +5,7 @@ export type Room = {
   phase: ROOM_PHASE;
   host: User;
   users: User[];
-  question: BaseQuestion;
+  questions: BaseQuestion[];
   num_of_students: number;
   num_of_answered: number;
 };
@@ -13,7 +13,7 @@ export type Room = {
 export type User = {
   userid: string;
   username: string;
-  answer?: any;
+  answers?: any[];
 };
 
 export enum QUESTION {

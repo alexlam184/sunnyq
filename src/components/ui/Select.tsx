@@ -1,4 +1,5 @@
 import React from 'react';
+import { UseFormRegister } from 'react-hook-form';
 
 export interface SelectOption {
   label: string;
@@ -6,7 +7,9 @@ export interface SelectOption {
 }
 
 interface SelectProps {
-  name: string;
+  name?: string | '';
+  register?: UseFormRegister<any> | undefined;
+  registerName?: string | '';
   options: SelectOption[];
   onChange?: React.ChangeEventHandler<HTMLSelectElement> | undefined;
   defaultValue?: any;
@@ -14,6 +17,8 @@ interface SelectProps {
 
 export const Select: React.FC<SelectProps> = ({
   name,
+  register,
+  registerName,
   options,
   onChange,
   defaultValue,
@@ -21,6 +26,7 @@ export const Select: React.FC<SelectProps> = ({
   return (
     <div>
       <select
+        {...(register ? register(registerName || '') : {})}
         name={name}
         id={name}
         className='mt-1.5 w-full rounded-md border-gray-300 text-gray-700 sm:text-sm p-3 bg-slate-50'
