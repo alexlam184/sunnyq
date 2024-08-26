@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UseFormSetValue } from 'react-hook-form';
 
 export interface TabOption {
@@ -24,7 +24,6 @@ const TabComponent: React.FC<TabProps> = ({
   const [selectedOption, setSelectedOption] = useState<TabOption | null>(
     options.find((option) => option.value === defaultValue) || null
   );
-
   return (
     <div className='flex relative overflow-x-auto overflow-y-hidden border-gray-200 whitespace-nowrap dark:border-gray-700 justify-evenly'>
       <div

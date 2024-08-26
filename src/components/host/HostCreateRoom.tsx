@@ -198,11 +198,11 @@ const HostCreateRoom = () => {
             setValue(`questions.${index}.type`, option.value);
           }}
           options={tabOptions}
-          defaultValue={sampleQuestion.type}
+          defaultValue={questions ? questions[index].type : sampleQuestion.type}
         />
       );
     },
-    [register, tabOptions]
+    [register, tabOptions, questions]
   );
 
   /**
@@ -274,6 +274,68 @@ const HostCreateRoom = () => {
     return null;
   };
 
+  /**
+   * Handle CSV Import
+   */
+  const [csvFile, setCsvFile] = useState(null);
+
+  const handleFileChange = (event: any) => {
+    setCsvFile(event.target.files[0]);
+  };
+
+  const parseCSV = (content: any) => {
+    const lines = content.split('\n');
+    const questions = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line) {
+        const fields = line
+          .split(',')
+          .map((field: any) => field.trim().replace(/^"|"$/g, ''));
+        const [
+          type,
+          question,
+          remark,
+          answer,
+          choiceA,
+          choiceB,
+          choiceC,
+          choiceD,
+        ] = fields;
+
+        const newQuestion = {
+          type: type,
+          question: question,
+          remark: remark,
+          choices: [
+            { value: CHOICE.A, content: choiceA },
+            { value: CHOICE.B, content: choiceB },
+            { value: CHOICE.C, content: choiceC },
+            { value: CHOICE.D, content: choiceD },
+          ],
+          answer: answer,
+        };
+
+        questions.push(newQuestion);
+      }
+    }
+
+    return questions;
+  };
+
+  const handleImportCSV = () => {
+    if (csvFile) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const content = e.target.result;
+        const importedQuestions = parseCSV(content);
+        append(importedQuestions);
+      };
+      reader.readAsText(csvFile);
+    }
+  };
+
   return (
     <section className='bg-slate-100'>
       <div className='min-h-screen mx-auto max-w-screen-xl px-4 py-10 lg:py-32 lg:flex lg:items-start'>
@@ -295,6 +357,21 @@ const HostCreateRoom = () => {
             title='Name'
             defaultValue={username}
           />
+          <div className='mt-4'>
+            <input
+              className='text-black'
+              type='file'
+              accept='.csv'
+              onChange={handleFileChange}
+            />
+            <Button
+              buttonText='Import CSV'
+              onClick={handleImportCSV}
+              buttonType='border'
+              themeColor='blue'
+              disabled={!csvFile}
+            />
+          </div>
           <div className='flex flex-col items-center justify-center space-y-2 mt-2 lg:min-w-[472px]'>
             {fields.length > 0 &&
               fields.map((field, index) => (
@@ -348,5 +425,4 @@ const HostCreateRoom = () => {
     </section>
   );
 };
-
 export default HostCreateRoom;
