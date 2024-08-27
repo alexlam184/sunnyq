@@ -4,7 +4,7 @@ import Button from '@/src/components/ui/Button';
 import InputField from '@/src/components/ui/InputField';
 import { MESSAGE } from '@/src/lib/enum';
 import { socket } from '@/src/lib/socket/socketio.service';
-import { Room } from '@/src/lib/type';
+import { QUESTION, Room } from '@/src/lib/type';
 import { useState } from 'react';
 
 export default function HostPage() {
@@ -23,10 +23,21 @@ export default function HostPage() {
       };
       // Join Room
       socket.emit(MESSAGE.JOIN_ROOM, { roomCode: roomCode, user: user });
-      socket.emit(MESSAGE.SUBMIT_ANSWER, {
-        roomCode: roomCode,
-        userid: user.userid,
-        answer: options[Math.floor(Math.random() * options.length)].toString(),
+      socket.emit(MESSAGE.FETCH_ROOM, roomCode, (room: Room) => {
+        const questions = room.questions;
+        const answers = questions.map((q, i) => {
+          return q.type === QUESTION.MultipleChoice
+            ? options[Math.floor(Math.random() * options.length)].toString()
+            : 'test' +
+                (i + 1 + startindex) +
+                ' answer' +
+                options[Math.floor(Math.random() * options.length)].toString();
+        });
+        socket.emit(MESSAGE.SUBMIT_ANSWER, {
+          roomCode: roomCode,
+          userid: user.userid,
+          answers: answers,
+        });
       });
     }
     setStartIndex(startindex + dataCount);
