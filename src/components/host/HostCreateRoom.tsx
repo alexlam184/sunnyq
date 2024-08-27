@@ -3,7 +3,7 @@ import { usePageStateStore } from '@/store/PageStateStroe';
 import { PAGESTATE, MESSAGE } from '@/src/lib/enum';
 import { useRoomStore } from '@/store/RoomStore';
 import { useLobbyStore } from '@/store/LobbyStore';
-import { useMemo, useCallback, useEffect, useState } from 'react';
+import { useMemo, useCallback, useEffect, useState, useRef } from 'react';
 import InputField from '../ui/InputField';
 import Button from '../ui/Button';
 import TextAreaField from '../ui/TextAreaField';
@@ -55,6 +55,19 @@ const emptyQuestion: BaseQuestion = {
 };
 
 const HostCreateRoom = () => {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const scrollPosition = useRef<number>(0);
+  useEffect(() => {
+    // Restore scroll position
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollPosition.current;
+    }
+  }, [scrollRef, scrollPosition]);
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      scrollPosition.current = scrollRef.current.scrollTop;
+    }
+  };
   /**
    * Zustand Stores
    */
@@ -340,7 +353,7 @@ const HostCreateRoom = () => {
   };
 
   return (
-    <section className='bg-slate-100'>
+    <section ref={scrollRef} onScroll={handleScroll} className='bg-slate-100'>
       <div className='min-h-screen mx-auto max-w-screen-xl px-4 py-10 lg:py-32 lg:flex lg:items-start'>
         <form
           onSubmit={handleSubmit(onFormSubmit)}
