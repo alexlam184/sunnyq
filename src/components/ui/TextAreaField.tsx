@@ -8,6 +8,7 @@ interface TextAreaProps {
   title: string;
   rows: number;
   onChange?: ChangeEventHandler<HTMLTextAreaElement> | undefined;
+  onBlur?: React.FocusEventHandler<HTMLTextAreaElement> | undefined;
   defaultValue?: string | '';
   disabled?: boolean | false;
 }
@@ -19,6 +20,7 @@ const TextAreaField: React.FC<TextAreaProps> = ({
   title,
   rows,
   onChange,
+  onBlur,
   defaultValue,
   disabled,
 }) => {
@@ -32,6 +34,7 @@ const TextAreaField: React.FC<TextAreaProps> = ({
         rows={rows}
         className='peer w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm text-black pt-6'
         onChange={onChange}
+        onBlur={onBlur}
         defaultValue={defaultValue}
         disabled={disabled}
       ></textarea>
