@@ -268,7 +268,7 @@ export default function HostRoom() {
       </div>
 
       {/* Tabs Field */}
-      <div className='flex-grow max-w-3xl bg-white rounded-lg shadow-lg p-8 md:ml-8 order-1 md:order-2 mb-8 md:mb-0 space-y-4'>
+      <div className='flex-grow max-w-lg bg-white rounded-lg shadow-lg p-8 md:ml-8 order-1 md:order-2 mb-8 md:mb-0 space-y-4'>
         <Tabs
           options={options}
           onChange={(option: TabOption) => {
