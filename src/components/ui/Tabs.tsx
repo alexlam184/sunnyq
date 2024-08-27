@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { UseFormSetValue } from 'react-hook-form';
 
 export interface TabOption {
   label: string;
@@ -24,6 +23,21 @@ const TabComponent: React.FC<TabProps> = ({
   const [selectedOption, setSelectedOption] = useState<TabOption | null>(
     options.find((option) => option.value === defaultValue) || null
   );
+
+  useEffect(() => {
+    if (selectedOption && disabledValues?.includes(selectedOption.value)) {
+      // Find the next available option that is not disabled
+      const nextOption = options.find(
+        (option) => !disabledValues?.includes(option.value)
+      );
+
+      if (nextOption) {
+        setSelectedOption(nextOption);
+        onChange && onChange(nextOption);
+      }
+    }
+  }, [selectedOption, disabledValues, options, onChange]);
+
   return (
     <div className='flex relative overflow-x-auto overflow-y-hidden border-gray-200 whitespace-nowrap dark:border-gray-700 justify-evenly'>
       <div
@@ -35,11 +49,13 @@ const TabComponent: React.FC<TabProps> = ({
         return (
           <button
             name={name}
-            type={undefined}
+            type='button'
             key={index}
             onClick={(e) => {
-              setSelectedOption(option);
-              onChange && onChange(option);
+              if (!disabled) {
+                setSelectedOption(option);
+                onChange && onChange(option);
+              }
             }}
             className={`inline-flex items-center h-10 px-4 text-lg text-center ${
               disabled
