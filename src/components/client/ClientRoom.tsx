@@ -9,7 +9,7 @@ import TextAreaField from '../ui/TextAreaField';
 import { ROOM_PHASE } from '@/src/lib/room-phase';
 import { useRouter } from 'next/navigation';
 import Pagination from '../ui/Pagination';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
 import { useForceUpdate } from '@/src/hook/useForceUpdate';
 
 export default function ClientRoom() {
@@ -27,9 +27,9 @@ export default function ClientRoom() {
    * Handle Form
    */
   const { register, control, handleSubmit, reset, formState, watch, setValue } =
-    useForm({
+    useForm<FieldValues>({
       defaultValues: {
-        answers: [] as String[],
+        answers: [] as string[],
       },
     });
   const { append } = useFieldArray({
@@ -115,7 +115,6 @@ export default function ClientRoom() {
             {room.questions[currentQuestionIndex].remark}
           </p>
 
-          {/* Answer Field */}
           <form onSubmit={handleSubmit(onSubmit)}>
             {room.questions[currentQuestionIndex].type ===
             QUESTION.MultipleChoice ? (
@@ -159,25 +158,26 @@ export default function ClientRoom() {
             ) : (
               <div className='space-y-4'>
                 <TextAreaField
+                  key={currentQuestionIndex}
                   name={`answers.${currentQuestionIndex}`}
                   register={register}
                   registerName={`answers.${currentQuestionIndex}`}
                   title='Answer'
                   rows={5}
                   disabled={submitted || room.phase === ROOM_PHASE.PAUSE}
+                  defaultValue={answers[currentQuestionIndex]}
                 />
               </div>
             )}
+            {/*Pagination*/}
+            <div className='pt-4'>
+              <Pagination
+                totalPages={room.questions.length}
+                currentIndex={currentQuestionIndex}
+                onPageChange={setCurrentQuestionIndex}
+              />
+            </div>
           </form>
-
-          {/*Pagination*/}
-          <div className='pt-4'>
-            <Pagination
-              totalPages={room.questions.length}
-              currentIndex={currentQuestionIndex}
-              onPageChange={setCurrentQuestionIndex}
-            />
-          </div>
         </div>
 
         {/* Submit button */}
