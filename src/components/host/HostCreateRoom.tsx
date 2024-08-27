@@ -179,7 +179,7 @@ const HostCreateRoom = () => {
         </>
       );
     },
-    [register]
+    [register, setValue]
   );
 
   /**
@@ -205,7 +205,7 @@ const HostCreateRoom = () => {
         />
       );
     },
-    [register, tabOptions, questions]
+    [register, tabOptions, questions, setValue]
   );
 
   /**

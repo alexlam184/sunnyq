@@ -48,7 +48,7 @@ const Statistics = ({
     ).length;
 
     return (correctAnswers / totalUsers) * 100;
-  }, [num_of_answered, question.answer, users]);
+  }, [num_of_answered, question.answer, users, currentQuestionIndex]);
 
   /**
    * Get the counts of each choice
@@ -77,7 +77,7 @@ const Statistics = ({
       default:
         return [];
     }
-  }, [users, question.answer, question.type]);
+  }, [users, question.answer, question.type, currentQuestionIndex]);
 
   return (
     <div className='scroll-container overflow-y-auto max-h-[95vh] p-4 bg-gray-100 shadow-md rounded-lg border border-gray-300'>
