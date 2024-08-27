@@ -8,15 +8,7 @@ import InputField from '../ui/InputField';
 import Button from '../ui/Button';
 import TextAreaField from '../ui/TextAreaField';
 import { Select, SelectOption } from '../ui/Select';
-import {
-  CHOICE,
-  MultipleChoiceQuestion,
-  BaseQuestion,
-  QUESTION,
-  TextInputQuestion,
-  choice,
-  OpenEndQuestion,
-} from '@/src/lib/type';
+import { CHOICE, BaseQuestion, QUESTION } from '@/src/lib/type';
 import Tabs, { TabOption } from '../ui/Tabs';
 import CollapsibleSection from '../ui/CollapsibleSection';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -26,7 +18,7 @@ import * as yup from 'yup';
 /**
  * Question Templates
  */
-const sampleQuestion: BaseQuestion = {
+const sampleQuestion: BaseQuestion & { mcAnswer: string } = {
   type: QUESTION.MultipleChoice,
   question:
     'Which of the following programming languages is primarily used for building web applications?',
@@ -38,10 +30,11 @@ const sampleQuestion: BaseQuestion = {
     { value: CHOICE.C, content: 'JavaScript' },
     { value: CHOICE.D, content: 'C++' },
   ],
-  answer: CHOICE.C,
+  answer: '',
+  mcAnswer: CHOICE.A,
 };
 
-const emptyQuestion: BaseQuestion = {
+const emptyQuestion: BaseQuestion & { mcAnswer: string } = {
   type: QUESTION.MultipleChoice,
   question: '',
   remark: '',
@@ -51,10 +44,14 @@ const emptyQuestion: BaseQuestion = {
     { value: CHOICE.C, content: '' },
     { value: CHOICE.D, content: '' },
   ],
-  answer: undefined,
+  answer: '',
+  mcAnswer: CHOICE.A,
 };
 
 const HostCreateRoom = () => {
+  /**
+   * Scroll Position Control
+   */
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const scrollPosition = useRef<number>(0);
   useEffect(() => {
@@ -68,6 +65,7 @@ const HostCreateRoom = () => {
       scrollPosition.current = scrollRef.current.scrollTop;
     }
   };
+
   /**
    * Zustand Stores
    */
@@ -91,6 +89,7 @@ const HostCreateRoom = () => {
             yup.object().shape({ value: yup.string(), content: yup.string() })
           ),
         answer: yup.string(),
+        mcAnswer: yup.string(),
       })
     ),
   });
@@ -145,7 +144,10 @@ const HostCreateRoom = () => {
         room.host = { userid: userid, username: username };
 
         // Update Question
-        room.questions = questions as BaseQuestion[];
+        room.questions = questions?.map(({ mcAnswer, ...rest }) => {
+          if (rest.type === QUESTION.MultipleChoice) rest.answer = mcAnswer;
+          return rest;
+        }) as BaseQuestion[];
 
         // Upload to Server
         socket.emit(MESSAGE.CREATE_ROOM, {
@@ -188,6 +190,9 @@ const HostCreateRoom = () => {
             registerName={`questions.${index}.remark`}
             title='Remark'
             rows={2}
+            onBlur={(e) =>
+              setValue(`questions.${index}.remark`, e.target.value)
+            }
           />
         </>
       );
@@ -246,6 +251,12 @@ const HostCreateRoom = () => {
                   registerName={`questions.${index}.choices.${choiceIndex}.content`}
                   title={choice.label}
                   rows={3}
+                  onBlur={(e) =>
+                    setValue(
+                      `questions.${index}.choices.${choiceIndex}.content`,
+                      e.target.value
+                    )
+                  }
                 />
               );
             })}
@@ -253,10 +264,13 @@ const HostCreateRoom = () => {
           <div className='flex items-center justify-end space-x-5'>
             <label className='text-black'>Correct Answer</label>
             <Select
-              name={`questions.${index}.answer`}
+              name={`questions.${index}.mcAnswer`}
               register={register}
-              registerName={`questions.${index}.answer`}
+              registerName={`questions.${index}.mcAnswer`}
               options={selectedOptions}
+              onBlur={(e) =>
+                setValue(`questions.${index}.mcAnswer`, e.target.value)
+              }
             />
           </div>
         </>
@@ -277,6 +291,7 @@ const HostCreateRoom = () => {
           registerName={`questions.${index}.answer`}
           title='Answer'
           rows={3}
+          onBlur={(e) => setValue(`questions.${index}.answer`, e.target.value)}
         />
       );
     },

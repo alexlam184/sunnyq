@@ -156,22 +156,24 @@ export default function ClientRoom() {
                 )}
               </div>
             ) : (
-              <div className='space-y-4'>
+              <div key={currentQuestionIndex} className='space-y-4'>
                 <TextAreaField
-                  key={currentQuestionIndex}
                   name={`answers.${currentQuestionIndex}`}
                   register={register}
                   registerName={`answers.${currentQuestionIndex}`}
                   title='Answer'
                   rows={5}
                   disabled={submitted || room.phase === ROOM_PHASE.PAUSE}
-                  defaultValue={answers[currentQuestionIndex]}
+                  onBlur={(e) =>
+                    setValue(`answers.${currentQuestionIndex}`, e.target.value)
+                  }
                 />
               </div>
             )}
             {/*Pagination*/}
             <div className='pt-4'>
               <Pagination
+                type='submit'
                 totalPages={room.questions.length}
                 currentIndex={currentQuestionIndex}
                 onPageChange={setCurrentQuestionIndex}
