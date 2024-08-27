@@ -165,6 +165,9 @@ const HostCreateRoom = () => {
             registerName={`questions.${index}.question`}
             title='Question'
             rows={3}
+            onBlur={(e) =>
+              setValue(`questions.${index}.question`, e.target.value)
+            }
           />
           <TextAreaField
             name={`questions.${index}.remark`}
@@ -377,7 +380,7 @@ const HostCreateRoom = () => {
               fields.map((field, index) => (
                 <CollapsibleSection
                   key={field.id || index}
-                  title={`Question ${index + 1}`}
+                  title={`${index + 1}. ${questions && questions[index].question}`}
                   deleteAction={() => handleRemoveField(index)}
                 >
                   <div className='my-2 flex-wrap gap-4 justify-center space-y-3'>
