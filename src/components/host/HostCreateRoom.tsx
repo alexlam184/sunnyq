@@ -98,7 +98,7 @@ const HostCreateRoom = () => {
     control,
   });
   const handleAppendField = () => {
-    append(sampleQuestion);
+    append(emptyQuestion);
   };
   const handleRemoveField = (index: number) => {
     remove(index);
@@ -201,7 +201,7 @@ const HostCreateRoom = () => {
             setValue(`questions.${index}.type`, option.value);
           }}
           options={tabOptions}
-          defaultValue={questions ? questions[index].type : sampleQuestion.type}
+          defaultValue={questions ? questions[index].type : emptyQuestion.type}
         />
       );
     },
