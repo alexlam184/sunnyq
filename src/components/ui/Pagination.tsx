@@ -4,12 +4,14 @@ interface PaginationProps {
   totalPages: number;
   currentIndex: number;
   onPageChange: (page: number) => void;
+  type?: 'submit' | undefined;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
   totalPages,
   currentIndex,
   onPageChange,
+  type,
 }) => {
   const renderPageNumbers = () => {
     const pageNumbers = [];
@@ -63,6 +65,7 @@ const Pagination: React.FC<PaginationProps> = ({
         </span>
       ) : (
         <button
+          type={type}
           onClick={() => onPageChange(page - 1)}
           className='block size-8 rounded border border-gray-100 bg-white text-center leading-8 text-gray-900'
         >
@@ -76,6 +79,7 @@ const Pagination: React.FC<PaginationProps> = ({
     <ol className='flex justify-center gap-1 text-xs font-medium'>
       <li>
         <button
+          type={type}
           onClick={() =>
             onPageChange(currentIndex > 0 ? currentIndex - 1 : currentIndex)
           }
@@ -102,6 +106,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
       <li>
         <button
+          type={type}
           onClick={() =>
             onPageChange(
               currentIndex < totalPages - 1 ? currentIndex + 1 : currentIndex
