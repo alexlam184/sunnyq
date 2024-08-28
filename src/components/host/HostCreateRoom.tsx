@@ -387,6 +387,7 @@ const HostCreateRoom = () => {
             type='text'
             title='Name'
             defaultValue={username}
+            onBlur={(e) => setValue(`username`, e.target.value)}
           />
           <div className='mt-4'>
             <input
