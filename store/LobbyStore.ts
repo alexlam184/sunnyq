@@ -62,7 +62,7 @@ export const useLobbyStore = create<LobbyStore>((set, get) => ({
 
     const room: Room = {
       roomCode: generateUniqueRoomCode(lobby),
-      phase: ROOM_PHASE.RUNNING,
+      phase: ROOM_PHASE.WAITING,
       users: [],
       host: { userid: '', username: '' },
       questions: [] as BaseQuestion[],

@@ -1,3 +1,4 @@
+import { maxHeaderSize } from 'http';
 import React from 'react';
 
 interface PaginationProps {
@@ -5,6 +6,8 @@ interface PaginationProps {
   currentIndex: number;
   onPageChange: (page: number) => void;
   type?: 'submit' | undefined;
+  themeColor?: 'blue' | 'green' | 'red';
+  maxVisiblePages?: number;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -12,10 +15,11 @@ const Pagination: React.FC<PaginationProps> = ({
   currentIndex,
   onPageChange,
   type,
+  themeColor = 'blue',
+  maxVisiblePages = 5,
 }) => {
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    const maxVisiblePages = 5; // Adjust this value to change the number of visible pages
 
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
@@ -56,11 +60,17 @@ const Pagination: React.FC<PaginationProps> = ({
 
     return pageNumbers;
   };
-
+  const colorVariant = {
+    blue: 'border-blue-600 bg-blue-600',
+    green: 'border-green-600 bg-green-600',
+    red: 'border-red-600 bg-red-600',
+  };
   const renderPageButton = (page: number) => (
     <li key={page}>
       {page === currentIndex + 1 ? (
-        <span className='block size-8 rounded border-blue-600 bg-blue-600 text-center leading-8 text-white'>
+        <span
+          className={`${colorVariant[themeColor]} block size-8 rounded text-center leading-8 text-white`}
+        >
           {page}
         </span>
       ) : (
@@ -83,7 +93,7 @@ const Pagination: React.FC<PaginationProps> = ({
           onClick={() =>
             onPageChange(currentIndex > 0 ? currentIndex - 1 : currentIndex)
           }
-          className='inline-flex size-8 items-center justify-center rounded border border-gray-100 bg-white text-gray-900 rtl:rotate-180'
+          className='inline-flex size-8 items-center justify-center rounded border border-gray-100 bg-white text-gray-900 rtl:rotate-180 disabled:text-gray-300'
           aria-label='Prev Page'
           disabled={currentIndex === 0}
         >
@@ -112,7 +122,7 @@ const Pagination: React.FC<PaginationProps> = ({
               currentIndex < totalPages - 1 ? currentIndex + 1 : currentIndex
             )
           }
-          className='inline-flex size-8 items-center justify-center rounded border border-gray-100 bg-white text-gray-900 rtl:rotate-180'
+          className='inline-flex size-8 items-center justify-center rounded border border-gray-100 bg-white text-gray-900 rtl:rotate-180 disabled:text-gray-300'
           aria-label='Next Page'
           disabled={currentIndex === totalPages - 1}
         >

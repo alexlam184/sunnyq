@@ -8,6 +8,7 @@ interface InputProps {
   type: string;
   title: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
+  onBlur?: React.FocusEventHandler<HTMLInputElement> | undefined;
   defaultValue?: string | number | '';
 }
 
@@ -18,6 +19,7 @@ const InputField: React.FC<InputProps> = ({
   type,
   title,
   onChange,
+  onBlur,
   defaultValue,
 }) => {
   return (
@@ -30,6 +32,7 @@ const InputField: React.FC<InputProps> = ({
         placeholder={title}
         className='peer h-8 w-full border-none bg-transparent p-0 placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm text-black'
         onChange={onChange}
+        onBlur={onBlur}
         defaultValue={defaultValue}
       />
 

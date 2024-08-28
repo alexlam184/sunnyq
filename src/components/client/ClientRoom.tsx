@@ -22,7 +22,7 @@ export default function ClientRoom() {
     room.phase === ROOM_PHASE.PAUSE
   );
   const [reminded, setReminded] = useState<boolean>(false);
-  const { forceUpdate } = useForceUpdate();
+
   /**
    * Handle Form
    */
@@ -99,106 +99,123 @@ export default function ClientRoom() {
         </h1>
 
         <div className='bg-gray-100 p-6 rounded-lg flex-grow'>
-          {/* Question Navigation */}
-          <div className='flex justify-center items-center mb-4'>
-            <span className='text-xl font-bold'>
-              Question {currentQuestionIndex + 1} of {room.questions.length}
-            </span>
-          </div>
+          {room.phase !== ROOM_PHASE.WAITING ? (
+            <>
+              {/* Question Navigation */}
+              <div className='flex justify-center items-center mb-4'>
+                <span className='text-xl font-bold'>
+                  Question {currentQuestionIndex + 1} of {room.questions.length}
+                </span>
+              </div>
 
-          {/* Question and Remarks */}
-          <h2 className='text-2xl font-bold mb-4 text-green-600'>Question</h2>
-          <p className='text-xl mb-2'>
-            {room.questions[currentQuestionIndex].question}
-          </p>
-          <p className='text-sm text-gray-500 mb-4'>
-            {room.questions[currentQuestionIndex].remark}
-          </p>
+              {/* Question and Remarks */}
+              <h2 className='text-2xl font-bold mb-4 text-green-600'>
+                Question {currentQuestionIndex + 1}
+              </h2>
+              <p className='text-xl mb-2'>
+                {room.questions[currentQuestionIndex].question}
+              </p>
+              <p className='text-sm text-gray-500 mb-4'>
+                {room.questions[currentQuestionIndex].remark}
+              </p>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {room.questions[currentQuestionIndex].type ===
-            QUESTION.MultipleChoice ? (
-              <div className='space-y-4'>
-                {room.questions[currentQuestionIndex].choices?.map(
-                  (choice: choice) => (
-                    <button
+              <form onSubmit={handleSubmit(onSubmit)}>
+                {room.questions[currentQuestionIndex].type ===
+                QUESTION.MultipleChoice ? (
+                  <div className='space-y-4'>
+                    {room.questions[currentQuestionIndex].choices?.map(
+                      (choice: choice) => (
+                        <button
+                          name={`answers.${currentQuestionIndex}`}
+                          key={choice.value}
+                          className={`w-full flex items-center text-lg ${room.phase !== ROOM_PHASE.PAUSE ? 'cursor-pointer' : null} ${
+                            room.phase !== ROOM_PHASE.PAUSE
+                              ? choice.value === answers[currentQuestionIndex]
+                                ? 'bg-green-200'
+                                : 'bg-white'
+                              : choice.value ===
+                                  room.questions[currentQuestionIndex].answer
+                                ? 'bg-green-200'
+                                : choice.value ===
+                                      answers[currentQuestionIndex] && submitted
+                                  ? 'bg-red-200'
+                                  : 'bg-white'
+                          } p-2 rounded`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            register(`answers.${currentQuestionIndex}`);
+                            setValue(
+                              `answers.${currentQuestionIndex}`,
+                              choice.value
+                            );
+                          }}
+                          disabled={
+                            submitted || room.phase === ROOM_PHASE.PAUSE
+                          }
+                        >
+                          <span className='font-semibold mr-2'>
+                            {choice.value}:
+                          </span>
+                          <span>{choice.content}</span>
+                        </button>
+                      )
+                    )}
+                  </div>
+                ) : (
+                  <div key={currentQuestionIndex} className='space-y-4'>
+                    <TextAreaField
                       name={`answers.${currentQuestionIndex}`}
-                      key={choice.value}
-                      className={`w-full flex items-center text-lg ${room.phase !== ROOM_PHASE.PAUSE ? 'cursor-pointer' : null} ${
-                        room.phase !== ROOM_PHASE.PAUSE
-                          ? choice.value === answers[currentQuestionIndex]
-                            ? 'bg-green-200'
-                            : 'bg-white'
-                          : choice.value ===
-                              room.questions[currentQuestionIndex].answer
-                            ? 'bg-green-200'
-                            : choice.value === answers[currentQuestionIndex] &&
-                                submitted
-                              ? 'bg-red-200'
-                              : 'bg-white'
-                      } p-2 rounded`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        register(`answers.${currentQuestionIndex}`);
+                      register={register}
+                      registerName={`answers.${currentQuestionIndex}`}
+                      title='Answer'
+                      rows={5}
+                      disabled={submitted || room.phase === ROOM_PHASE.PAUSE}
+                      onBlur={(e) =>
                         setValue(
                           `answers.${currentQuestionIndex}`,
-                          choice.value
-                        );
-                      }}
-                      disabled={submitted || room.phase === ROOM_PHASE.PAUSE}
-                    >
-                      <span className='font-semibold mr-2'>
-                        {choice.value}:
-                      </span>
-                      <span>{choice.content}</span>
-                    </button>
-                  )
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
                 )}
-              </div>
-            ) : (
-              <div key={currentQuestionIndex} className='space-y-4'>
-                <TextAreaField
-                  name={`answers.${currentQuestionIndex}`}
-                  register={register}
-                  registerName={`answers.${currentQuestionIndex}`}
-                  title='Answer'
-                  rows={5}
-                  disabled={submitted || room.phase === ROOM_PHASE.PAUSE}
-                  onBlur={(e) =>
-                    setValue(`answers.${currentQuestionIndex}`, e.target.value)
-                  }
-                />
-              </div>
-            )}
-            {/*Pagination*/}
-            <div className='pt-4'>
-              <Pagination
-                type='submit'
-                totalPages={room.questions.length}
-                currentIndex={currentQuestionIndex}
-                onPageChange={setCurrentQuestionIndex}
-              />
+                {/*Pagination*/}
+                <div className='pt-4'>
+                  <Pagination
+                    type='submit'
+                    totalPages={room.questions.length}
+                    currentIndex={currentQuestionIndex}
+                    onPageChange={setCurrentQuestionIndex}
+                    themeColor='green'
+                  />
+                </div>
+              </form>
+            </>
+          ) : (
+            <div className='text-black text-center font-bold text-3xl'>
+              Please wait the host to start the game.
             </div>
-          </form>
+          )}
         </div>
 
         {/* Submit button */}
-        {room.phase !== ROOM_PHASE.PAUSE && (
-          <div className='flex justify-end space-x-4 mt-8'>
-            {!submitted ? (
-              <Button
-                buttonText='Submit'
-                onClick={handleWholeSubmit}
-                buttonType='base'
-                themeColor='green'
-              />
-            ) : (
-              <span className='text-green-700'>
-                You have submitted your answer.
-              </span>
-            )}
-          </div>
-        )}
+        {room.phase != ROOM_PHASE.WAITING &&
+          room.phase !== ROOM_PHASE.PAUSE && (
+            <div className='flex justify-end space-x-4 mt-8'>
+              {!submitted ? (
+                <Button
+                  buttonText='Submit'
+                  onClick={handleWholeSubmit}
+                  buttonType='base'
+                  themeColor='green'
+                />
+              ) : (
+                <span className='text-green-700'>
+                  You have submitted your answer.
+                </span>
+              )}
+            </div>
+          )}
         {/*Display a reminder to answer multiple-choice question before submission when reminded is true*/}
         {room.phase !== ROOM_PHASE.PAUSE &&
           room.questions[currentQuestionIndex].type ===
