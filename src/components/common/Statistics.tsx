@@ -1,4 +1,4 @@
-import { BaseQuestion, CHOICE, QUESTION, Room, User } from '@/src/lib/type';
+import { BaseQuestion, CHOICE, QUESTION, User } from '@/src/lib/type';
 import { useMemo } from 'react';
 import {
   ResponsiveContainer,
