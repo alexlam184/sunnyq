@@ -30,7 +30,7 @@ export const Select: React.FC<SelectProps> = ({
       {...(register ? register(registerName || '') : {})}
       name={name}
       id={name}
-      className='mt-1.5 w-full rounded-md border-gray-300 text-gray-700 sm:text-sm p-3 bg-slate-50'
+      className='mt-1.5 w-auto rounded-md border-gray-300 text-gray-700 sm:text-sm p-3 bg-slate-50'
       onChange={onChange}
       onBlur={onBlur}
       defaultValue={defaultValue}
