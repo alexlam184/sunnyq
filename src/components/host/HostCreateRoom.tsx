@@ -14,6 +14,7 @@ import CollapsibleSection from '../ui/CollapsibleSection';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import Toggle from '../ui/Toggle';
 
 /**
  * Question Templates
@@ -70,14 +71,17 @@ const HostCreateRoom = () => {
    * Zustand Stores
    */
   const { setPageState } = usePageStateStore();
-  const { setRoom, username, setUsername } = useRoomStore();
+  const { setRoom, setUsername } = useRoomStore();
   const { createRoom, addRoomCode, setLobby } = useLobbyStore();
 
   /**
    * Handle Form
    */
   const validationSchema = yup.object().shape({
-    username: yup.string().required('Username is required'),
+    username: yup.string().required('Username is required').default(''),
+    showUserList: yup.bool().default(false),
+    showAnswers: yup.bool().default(false),
+    showStatistics: yup.bool().default(false),
     questions: yup.array().of(
       yup.object().shape({
         type: yup.string().required('Type is required'),
@@ -118,7 +122,11 @@ const HostCreateRoom = () => {
   const onFormSubmit = (data: any) => {
     setUsername(data.username);
   };
+  const username = watch('username');
   const questions = watch('questions');
+  const showUserList = watch('showUserList');
+  const showAnswers = watch('showAnswers');
+  const showStatistics = watch('showStatistics');
 
   /**
    * Handle Room Events
@@ -126,6 +134,7 @@ const HostCreateRoom = () => {
   // Change Page after room is initiated
   const { room } = useRoomStore();
   const [canChangePage, setCanChangePage] = useState(false);
+  // TODO: Fix depencies problem
   useEffect(() => {
     if (!canChangePage) return;
     setPageState(PAGESTATE.inGame);
@@ -148,6 +157,11 @@ const HostCreateRoom = () => {
           if (rest.type === QUESTION.MultipleChoice) rest.answer = mcAnswer;
           return rest;
         }) as BaseQuestion[];
+
+        // Update settings
+        room.showUserList = showUserList;
+        room.showAnswers = showAnswers;
+        room.showStatistics = showStatistics;
 
         // Upload to Server
         socket.emit(MESSAGE.CREATE_ROOM, {
@@ -271,12 +285,13 @@ const HostCreateRoom = () => {
               onBlur={(e) =>
                 setValue(`questions.${index}.mcAnswer`, e.target.value)
               }
+              defaultValue={`questions.${index}.mcAnswer`}
             />
           </div>
         </>
       );
     },
-    [selectedOptions, register]
+    [selectedOptions, register, setValue]
   );
 
   /**
@@ -295,7 +310,7 @@ const HostCreateRoom = () => {
         />
       );
     },
-    [register]
+    [register, setValue]
   );
 
   /**
@@ -339,13 +354,14 @@ const HostCreateRoom = () => {
           type: type,
           question: question,
           remark: remark,
+          answer: answer,
+          mcAnswer: answer,
           choices: [
             { value: CHOICE.A, content: choiceA },
             { value: CHOICE.B, content: choiceB },
             { value: CHOICE.C, content: choiceC },
             { value: CHOICE.D, content: choiceD },
           ],
-          answer: answer,
         };
 
         questions.push(newQuestion);
@@ -364,7 +380,19 @@ const HostCreateRoom = () => {
         append(importedQuestions);
       };
       reader.readAsText(csvFile);
+      setCsvFile(null);
     }
+  };
+
+  /**
+   * Subtitle
+   */
+  const SubTitle = ({ subtitle }: { subtitle: string }) => {
+    return (
+      <h2 className='mt-4 mb-2 leading-relaxed text-gray-500 font-bold'>
+        {subtitle}
+      </h2>
+    );
   };
 
   return (
@@ -377,9 +405,7 @@ const HostCreateRoom = () => {
           <h1 className='text-3xl font-extrabold sm:text-5xl text-black'>
             Room Creator 🦑
           </h1>
-          <p className='mt-4 mb-2 leading-relaxed text-gray-500'>
-            Design and build a room
-          </p>
+          <SubTitle subtitle='Basic' />
           <InputField
             name={`username`}
             register={register}
@@ -389,7 +415,38 @@ const HostCreateRoom = () => {
             defaultValue={username}
             onBlur={(e) => setValue(`username`, e.target.value)}
           />
-          <div className='mt-4'>
+          <SubTitle subtitle='Setting' />
+          <div className='p-2 grid gap-2 grid-cols-2'>
+            <div className='flex items-center justify-evenly space-x-2'>
+              <span className='text-black text-md'>Show User List</span>
+              <Toggle
+                activeColor='blue'
+                onClick={(e) => {
+                  setValue('showUserList', e.currentTarget.checked);
+                }}
+              />
+            </div>
+            <div className='flex items-center justify-evenly space-x-2'>
+              <span className='text-black text-md'>Show Answers</span>
+              <Toggle
+                activeColor='blue'
+                onClick={(e) => {
+                  setValue('showAnswers', e.currentTarget.checked);
+                }}
+              />
+            </div>
+            <div className='flex items-center justify-evenly space-x-2'>
+              <span className='text-black text-md'>Show Statistics</span>
+              <Toggle
+                activeColor='blue'
+                onClick={(e) => {
+                  setValue('showStatistics', e.currentTarget.checked);
+                }}
+              />
+            </div>
+          </div>
+          <SubTitle subtitle='CSV Import' />
+          <div className='p-4 flex-none flex-col items-center justify-center space-y-3'>
             <input
               className='text-black'
               type='file'
@@ -404,6 +461,7 @@ const HostCreateRoom = () => {
               disabled={!csvFile}
             />
           </div>
+          <SubTitle subtitle='Question' />
           <div className='flex flex-col items-center justify-center space-y-2 mt-2 lg:min-w-[472px]'>
             {fields.length > 0 &&
               fields.map((field, index) => (

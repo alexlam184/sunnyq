@@ -1,7 +1,7 @@
 'use client';
 import { choice, CHOICE, QUESTION } from '@/src/lib/type';
 import { useRoomStore } from '@/store/RoomStore';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Button from '../ui/Button';
 import { socket } from '@/src/lib/socket/socketio.service';
 import { MESSAGE } from '@/src/lib/enum';
@@ -10,7 +10,15 @@ import { ROOM_PHASE } from '@/src/lib/room-phase';
 import { useRouter } from 'next/navigation';
 import Pagination from '../ui/Pagination';
 import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
-import { useForceUpdate } from '@/src/hook/useForceUpdate';
+import UserList from '../common/UserList';
+import Tabs, { TabOption } from '../ui/Tabs';
+import AnswerList from '../common/AnswerList';
+import Statistics from '../common/Statistics';
+
+enum TABS {
+  Answers = 'Answers',
+  Statistics = 'Statistics',
+}
 
 export default function ClientRoom() {
   /**
@@ -22,6 +30,23 @@ export default function ClientRoom() {
     room.phase === ROOM_PHASE.PAUSE
   );
   const [reminded, setReminded] = useState<boolean>(false);
+
+  const [tab, setTab] = useState<TABS | undefined>(undefined);
+  const tabOptions: TabOption[] = useMemo(
+    () => [
+      ...(room.showAnswers
+        ? [{ value: TABS.Answers, label: TABS.Answers }]
+        : []),
+      ...(room.showStatistics
+        ? [{ value: TABS.Statistics, label: TABS.Statistics }]
+        : []),
+    ],
+    [room.showAnswers, room.showStatistics]
+  );
+  useEffect(() => {
+    // Find the next available option that exist
+    setTab(tabOptions && tabOptions[0] ? tabOptions[0].value : undefined);
+  }, [tabOptions]);
 
   /**
    * Handle Form
@@ -58,6 +83,7 @@ export default function ClientRoom() {
       userid: userid,
       answers: answers as string[],
     });
+    // Update room
     setSubmitted(true);
     setReminded(false);
   };
@@ -71,7 +97,7 @@ export default function ClientRoom() {
   }, []);
 
   return (
-    <div className='flex min-h-screen bg-gradient-to-b from-green-100 to-green-200 text-gray-800 p-8 flex-col md:flex-row'>
+    <div className='flex min-h-screen lg:h-screen bg-gradient-to-b from-green-100 to-green-200 text-gray-800 p-8 flex-col md:flex-row'>
       <div className='w-full md:w-80 flex flex-col order-1'>
         {/* Info Field */}
         <div className='bg-white rounded-lg shadow-lg p-6 mb-8 flex-none'>
@@ -90,6 +116,15 @@ export default function ClientRoom() {
             <span className='font-semibold text-black'>{room.roomCode}</span>
           </h2>
         </div>
+        {/* Player List Field */}
+        {room.showUserList && (
+          <UserList
+            num_of_students={room.num_of_students}
+            users={room.users}
+            currentQuestionIndex={currentQuestionIndex}
+            themeColor='green'
+          />
+        )}
       </div>
 
       {/* Question Answer Field */}
@@ -242,6 +277,38 @@ export default function ClientRoom() {
             </div>
           ))}
       </div>
+      {/* Tabs Field */}
+      {tab && tabOptions.length > 0 && room.phase !== ROOM_PHASE.WAITING && (
+        <div className='flex-grow max-w-lg bg-white rounded-lg shadow-lg p-8 md:ml-8 order-1 md:order-2 mb-8 md:mb-0 space-y-4'>
+          <Tabs
+            options={tabOptions}
+            onChange={(option: TabOption) => {
+              setTab(option.value);
+            }}
+            disabledValues={
+              room.questions[currentQuestionIndex].type === QUESTION.OpenEnd
+                ? [TABS.Statistics]
+                : undefined
+            }
+            themeColor='green'
+            defaultValue={tab}
+          />
+          {tab === TABS.Answers ? (
+            <AnswerList
+              users={room.users}
+              questions={room.questions}
+              currentQuestionIndex={currentQuestionIndex}
+            />
+          ) : tab === TABS.Statistics ? (
+            <Statistics
+              num_of_answered={room.num_of_answered}
+              question={room.questions[currentQuestionIndex]}
+              users={room.users}
+              currentQuestionIndex={currentQuestionIndex}
+            />
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }
