@@ -66,7 +66,7 @@ export default function ClientRoom() {
     for (let i = 0; i < room.questions.length; i++) {
       append('');
     }
-  }, []);
+  }, [append, room.questions.length]);
   const onSubmit = () => {};
   const answers = watch('answers');
 
@@ -94,7 +94,7 @@ export default function ClientRoom() {
   const router = useRouter();
   useEffect(() => {
     router.push('/client?roomcode=' + room.roomCode);
-  }, []);
+  }, [room.roomCode, router]);
 
   return (
     <div className='flex min-h-screen lg:h-screen bg-gradient-to-b from-green-100 to-green-200 text-gray-800 p-8 flex-col md:flex-row'>

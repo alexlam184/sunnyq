@@ -64,7 +64,15 @@ export default function ClientPage() {
     return () => {
       socket.off(MESSAGE.FETCH_REQUEST);
     };
-  }, [addUser, resetLobby, resetPageState, resetRoom, setRoom]);
+  }, [
+    addUser,
+    resetLobby,
+    resetPageState,
+    resetRoom,
+    setRoom,
+    setGeneral_ModalContentState,
+    setGeneral_ModalIsOpenedState,
+  ]);
 
   return (
     <div className='min-h-screen'>

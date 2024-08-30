@@ -33,7 +33,7 @@ export default function ClientIdle() {
         setHasRoomCodeParam(true);
       }
     });
-  }, [roomCodeParam]);
+  }, [roomCodeParam, hasRoom, router, setLobby]);
 
   const handleJoinClick = () => {
     socket.emit(MESSAGE.FETCH_LOBBY, (lobby: string[]) => {
