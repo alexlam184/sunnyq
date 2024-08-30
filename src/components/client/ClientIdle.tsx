@@ -12,7 +12,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function ClientIdle() {
   const [roomCode, setRoomCode] = useState<string>('');
-  const [hasRoomCodeParam, setHasRoomCodeParam] = useState<boolean>(false);
 
   const { hasRoom, isFull, setLobby } = useLobbyStore();
   const { setRoom, username, setUsername, setUserID } = useRoomStore();
@@ -30,7 +29,6 @@ export default function ClientIdle() {
         router.push('/client');
       } else {
         setRoomCode(roomCodeParam);
-        setHasRoomCodeParam(true);
       }
     });
   }, [roomCodeParam, hasRoom, router, setLobby]);
@@ -90,17 +88,16 @@ export default function ClientIdle() {
               }}
             />
           </div>
-          {!hasRoomCodeParam && (
-            <div className='flex items-center justify-center'>
-              <InputField
-                type='text'
-                title='room code'
-                onChange={(e) => {
-                  setRoomCode(e.target.value);
-                }}
-              />
-            </div>
-          )}
+          <div className='flex items-center justify-center'>
+            <InputField
+              type='text'
+              title='room code'
+              onChange={(e) => {
+                setRoomCode(e.target.value);
+              }}
+              defaultValue={roomCodeParam || ''}
+            />
+          </div>
           <div className='mt-8 flex flex-wrap justify-center gap-4'>
             <Button
               buttonText='Join Room'
