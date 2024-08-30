@@ -131,15 +131,6 @@ const HostCreateRoom = () => {
   /**
    * Handle Room Events
    */
-  // Change Page after room is initiated
-  const { room } = useRoomStore();
-  const [canChangePage, setCanChangePage] = useState(false);
-  // TODO: Fix depencies problem
-  useEffect(() => {
-    if (!canChangePage) return;
-    setPageState(PAGESTATE.inGame);
-  }, [room]);
-
   const handleCreateRoom = () => {
     socket.emit(MESSAGE.FETCH_LOBBY, (lobby: string[]) => {
       const room = createRoom(lobby);
@@ -172,9 +163,11 @@ const HostCreateRoom = () => {
         setLobby(lobby);
         addRoomCode(room.roomCode);
         setRoom(room);
+
+        // Change Page
+        setPageState(PAGESTATE.inGame);
       });
     });
-    setCanChangePage(true);
   };
   const handleBack = () => {
     // Change page
