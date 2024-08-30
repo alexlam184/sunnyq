@@ -8,6 +8,9 @@ export type Room = {
   questions: BaseQuestion[];
   num_of_students: number;
   num_of_answered: number;
+  showUserList: boolean;
+  showAnswers: boolean;
+  showStatistics: boolean;
 };
 
 export type User = {

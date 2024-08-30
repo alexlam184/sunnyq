@@ -11,6 +11,9 @@ const emptyRoom: Room = {
   questions: [] as BaseQuestion[],
   num_of_students: 0,
   num_of_answered: 0,
+  showUserList: false,
+  showAnswers: false,
+  showStatistics: false,
 };
 
 type RoomStore = {
