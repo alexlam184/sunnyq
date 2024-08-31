@@ -9,11 +9,16 @@ import { useRoomStore } from '@/store/RoomStore';
 import ClientRoom from '@/src/components/client/ClientRoom';
 import Modal from '@/src/components/common/Modal';
 import { useGeneralStateStore } from '@/store/GeneralStateStore';
+import { Suspense } from 'react';
 
 const renderSwitch = (param: PAGESTATE) => {
   switch (param) {
     case PAGESTATE.front:
-      return <ClientIdle />;
+      return (
+        <Suspense>
+          <ClientIdle />
+        </Suspense>
+      );
     case PAGESTATE.inGame:
       return <ClientRoom />;
     default:
