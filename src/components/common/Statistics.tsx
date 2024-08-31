@@ -1,4 +1,4 @@
-import { CHOICE, QUESTION, Room, User } from '@/src/lib/type';
+import { BaseQuestion, CHOICE, QUESTION, User } from '@/src/lib/type';
 import { useMemo } from 'react';
 import {
   ResponsiveContainer,
@@ -15,13 +15,6 @@ import {
 } from 'recharts';
 
 /**
- * Define the properties for Statistics.
- */
-interface StatisticsProps {
-  room: Room;
-}
-
-/**
  * Define the colors for each choice.
  */
 const COLORS = [
@@ -31,8 +24,17 @@ const COLORS = [
   '#FF8042', // Red
 ];
 
-const Statistics: React.FC<StatisticsProps> = ({ room }) => {
-  const { num_of_answered, question, users } = room;
+const Statistics = ({
+  num_of_answered,
+  question,
+  users,
+  currentQuestionIndex,
+}: {
+  num_of_answered: number;
+  question: BaseQuestion;
+  users: User[];
+  currentQuestionIndex: number;
+}) => {
   /**
    * Calculate the accuracy of the question's answers
    */
@@ -41,28 +43,30 @@ const Statistics: React.FC<StatisticsProps> = ({ room }) => {
     if (totalUsers === 0) return 0;
 
     const correctAnswers = users.filter(
-      (user) => user.answer === question.answer
+      (user) =>
+        user.answers && user.answers[currentQuestionIndex] === question.answer
     ).length;
 
     return (correctAnswers / totalUsers) * 100;
-  }, [num_of_answered, question.answer, users]);
+  }, [num_of_answered, question.answer, users, currentQuestionIndex]);
 
   /**
    * Get the counts of each choice
    */
   const data = useMemo(() => {
-    switch (room.question.type) {
+    switch (question.type) {
       case QUESTION.MultipleChoice:
         const counts: { [key in CHOICE]: number } = { A: 0, B: 0, C: 0, D: 0 };
         users.forEach((user) => {
-          user.answer && counts[user.answer as CHOICE]++;
+          user.answers &&
+            user.answers[currentQuestionIndex] &&
+            counts[user.answers[currentQuestionIndex] as CHOICE]++;
         });
         return Object.entries(counts).map(([name, value]) => ({ name, value }));
       case QUESTION.TextInput:
-        // TODO: complete data counts
-        const correctCounts = { correct: 0, incorrect: 1 };
+        const correctCounts = { correct: 0, incorrect: 0 };
         users.forEach((user) => {
-          user.answer && user.answer === room.question.answer
+          user.answers && user.answers[currentQuestionIndex] === question.answer
             ? correctCounts.correct++
             : correctCounts.incorrect++;
         });
@@ -73,7 +77,7 @@ const Statistics: React.FC<StatisticsProps> = ({ room }) => {
       default:
         return [];
     }
-  }, [users, room.question.answer, room.question.type]);
+  }, [users, question.answer, question.type, currentQuestionIndex]);
 
   return (
     <div className='scroll-container overflow-y-auto max-h-[95vh] p-4 bg-gray-100 shadow-md rounded-lg border border-gray-300'>

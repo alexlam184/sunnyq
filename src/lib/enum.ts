@@ -18,7 +18,7 @@ export enum MESSAGE {
   FETCH_ROOM = 'room:fetch-room',
   SUBMIT_ANSWER = 'room:submit-answer',
   DELETE_ROOM = 'room:delete-room',
-  PAUSE_ROOM = 'room:pause-room',
+  CHANGE_ROOM_DATA = 'room:change-data',
 
   FETCH_LOBBY = 'lobby:fetch-lobby',
   CREATE_ROOM = 'lobby:host-create-room',

@@ -17,6 +17,7 @@
   "dependencies": {
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
+    "@hookform/resolvers": "^3.9.0",
     "@socket.io/admin-ui": "^0.5.1",
     "clsx": "^2.1.1",
     "eslint-config-prettier": "^9.1.0",
@@ -26,15 +27,18 @@
     "lenis": "^1.1.9",
     "lint-staged": "^15.2.2",
     "next": "14.2.3",
+    "next-qrcode": "^2.5.1",
     "react": "^18",
     "react-dom": "^18",
     "react-element-to-jsx-string": "^15.0.0",
+    "react-hook-form": "^7.52.2",
     "react-icons": "^5.2.1",
     "recharts": "^2.13.0-alpha.4",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "tailwind-merge": "^2.3.0",
     "use-immer": "^0.10.0",
+    "yup": "^1.4.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

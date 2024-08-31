@@ -5,9 +5,10 @@ import { Room, User } from '@/src/lib/type';
 import { useLobbyStore } from '@/store/LobbyStore';
 import { usePageStateStore } from '@/store/PageStateStroe';
 import { useRoomStore } from '@/store/RoomStore';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '../ui/Button';
 import InputField from '../ui/InputField';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function ClientIdle() {
   const [roomCode, setRoomCode] = useState<string>('');
@@ -15,6 +16,22 @@ export default function ClientIdle() {
   const { hasRoom, isFull, setLobby } = useLobbyStore();
   const { setRoom, username, setUsername, setUserID } = useRoomStore();
   const { setPageState } = usePageStateStore();
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const roomCodeParam = searchParams.get('roomcode');
+  useEffect(() => {
+    if (!roomCodeParam) return;
+    socket.emit(MESSAGE.FETCH_LOBBY, (lobby: string[]) => {
+      // Fetch Lobby
+      setLobby(lobby);
+      if (!hasRoom(roomCodeParam || '')) {
+        router.push('/client');
+      } else {
+        setRoomCode(roomCodeParam);
+      }
+    });
+  }, [roomCodeParam, hasRoom, router, setLobby]);
 
   const handleJoinClick = () => {
     socket.emit(MESSAGE.FETCH_LOBBY, (lobby: string[]) => {
@@ -78,6 +95,7 @@ export default function ClientIdle() {
               onChange={(e) => {
                 setRoomCode(e.target.value);
               }}
+              defaultValue={roomCodeParam || ''}
             />
           </div>
           <div className='mt-8 flex flex-wrap justify-center gap-4'>

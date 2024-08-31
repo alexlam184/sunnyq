@@ -1,5 +1,5 @@
 import { ROOM_PHASE } from '@/src/lib/room-phase';
-import { CHOICE, QUESTION, Room, User } from '@/src/lib/type';
+import { BaseQuestion, CHOICE, QUESTION, Room, User } from '@/src/lib/type';
 import { randomInt } from '@/src/lib/utils';
 import { create } from 'zustand';
 
@@ -62,16 +62,15 @@ export const useLobbyStore = create<LobbyStore>((set, get) => ({
 
     const room: Room = {
       roomCode: generateUniqueRoomCode(lobby),
-      phase: ROOM_PHASE.SETUP,
+      phase: ROOM_PHASE.WAITING,
       users: [],
       host: { userid: '', username: '' },
-      question: {
-        type: QUESTION.MultipleChoice,
-        question: '',
-        remark: '',
-      },
+      questions: [] as BaseQuestion[],
       num_of_students: 0,
       num_of_answered: 0,
+      showUserList: false,
+      showAnswers: false,
+      showStatistics: false,
     };
 
     console.log(`Lobby: Room: ${room.roomCode} is created.`);

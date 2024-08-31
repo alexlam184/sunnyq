@@ -64,7 +64,13 @@ export default function HostPage() {
     return () => {
       socket.off(MESSAGE.FETCH_REQUEST);
     };
-  }, [addUser, resetLobby, setRoom]);
+  }, [
+    addUser,
+    resetLobby,
+    setRoom,
+    setGeneral_ModalContentState,
+    setGeneral_ModalIsOpenedState,
+  ]);
 
   return (
     <div className='min-h-screen'>

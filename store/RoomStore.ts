@@ -1,19 +1,19 @@
 import { ROOM_PHASE } from '@src/lib/room-phase';
 import { BaseQuestion, QUESTION, Room, User } from '@/src/lib/type';
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 const emptyRoom: Room = {
   roomCode: '',
   phase: ROOM_PHASE.SETUP,
   users: [],
   host: { userid: '', username: '' },
-  question: {
-    type: QUESTION.MultipleChoice,
-    question: '',
-    remark: '',
-  },
+  questions: [] as BaseQuestion[],
   num_of_students: 0,
   num_of_answered: 0,
+  showUserList: false,
+  showAnswers: false,
+  showStatistics: false,
 };
 
 type RoomStore = {
@@ -81,33 +81,37 @@ type RoomStore = {
    *
    * @param {BaseQuestion} question - The new question to set.
    */
-  setQuestion(question: BaseQuestion): void;
+  setQuestions(question: BaseQuestion[]): void;
 };
 
-export const useRoomStore = create<RoomStore>((set, get) => ({
-  username: '',
-  userid: '',
-  setUsername: (username: string) => set({ username: username }),
-  setUserID: (userid: string) => set({ userid: userid }),
-  room: emptyRoom,
-  setRoom: (room: Room) => set({ room: room }),
-  resetRoom: () => set({ room: emptyRoom }),
-  setRoomCode: (roomCode: string) => {
-    get().room.roomCode = roomCode;
-  },
-  setPhase: (phase: ROOM_PHASE) => {
-    get().room.phase = phase;
-  },
-  addUser: (user: User) => {
-    get().room.users.push(user);
-  },
-  removeUser: (user: User) => {
-    get().room.users.filter((u) => u.userid !== user.userid);
-  },
-  setHost: (host: User) => {
-    get().room.host = host;
-  },
-  setQuestion: (question: BaseQuestion) => {
-    get().room.question = question;
-  },
-}));
+export const useRoomStore = create<RoomStore, any>(
+  devtools((set, get) => ({
+    username: '',
+    userid: '',
+    setUsername: (username: string) => set({ username: username }),
+    setUserID: (userid: string) => set({ userid: userid }),
+    room: emptyRoom,
+    setRoom: (room: Room) => {
+      set({ room: room });
+    },
+    resetRoom: () => set({ room: emptyRoom }),
+    setRoomCode: (roomCode: string) => {
+      get().room.roomCode = roomCode;
+    },
+    setPhase: (phase: ROOM_PHASE) => {
+      get().room.phase = phase;
+    },
+    addUser: (user: User) => {
+      get().room.users.push(user);
+    },
+    removeUser: (user: User) => {
+      get().room.users.filter((u) => u.userid !== user.userid);
+    },
+    setHost: (host: User) => {
+      get().room.host = host;
+    },
+    setQuestions: (questions: BaseQuestion[]) => {
+      get().room.questions = questions;
+    },
+  }))
+);

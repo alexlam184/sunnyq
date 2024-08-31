@@ -2,10 +2,11 @@ import React from 'react';
 
 interface ButtonProps {
   buttonText: string;
-  onClick: () => void;
+  onClick?: () => void;
   disabled?: boolean;
   buttonType: 'base' | 'border';
   themeColor: 'blue' | 'green' | 'red';
+  type?: undefined | 'submit' | 'reset' | 'button';
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -14,6 +15,7 @@ const Button: React.FC<ButtonProps> = ({
   disabled,
   buttonType,
   themeColor,
+  type,
 }) => {
   disabled = disabled === undefined ? false : disabled;
   const baseBackColorVariant = {
@@ -35,7 +37,8 @@ const Button: React.FC<ButtonProps> = ({
     red: 'text-red-600 active:text-red-500',
   };
   return buttonType === 'base' ? (
-    <a
+    <button
+      type={type}
       className={`text-white dark:text-black group relative inline-block text-sm font-medium text-blue focus:outline-none focus:ring`}
       onClick={!disabled ? onClick : undefined}
     >
@@ -47,9 +50,10 @@ const Button: React.FC<ButtonProps> = ({
       >
         {buttonText}
       </span>
-    </a>
+    </button>
   ) : (
-    <a
+    <button
+      type={type}
       className={`${borderColorVariant[themeColor]} group relative inline-block text-sm font-medium focus:outline-none focus:ring`}
       onClick={!disabled ? onClick : undefined}
     >
@@ -59,7 +63,7 @@ const Button: React.FC<ButtonProps> = ({
       >
         {buttonText}
       </span>
-    </a>
+    </button>
   );
 };
 
