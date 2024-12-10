@@ -41,7 +41,9 @@ export default function HostRoom() {
    */
   const { Canvas } = useQRCode();
   const InfoTab = useCallback(() => {
-    let url = process.env.NEXT_PUBLIC_SOCKETIO_PRODUCTION_HOSTNAME;
+    let url =
+      process.env.NEXT_PUBLIC_SOCKETIO_PRODUCTION_HOSTNAME ||
+      'https://sunnyq.vercel.app';
 
     if (process.env.NEXT_PUBLIC_NODE_ENV !== 'production') {
       url =
