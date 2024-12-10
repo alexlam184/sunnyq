@@ -41,18 +41,14 @@ export default function HostRoom() {
    */
   const { Canvas } = useQRCode();
   const InfoTab = useCallback(() => {
-    let url =
-      process.env.NEXT_PUBLIC_SOCKETIO_PRODUCTION_HOSTNAME ||
-      'https://sunnyq.vercel.app';
-
-    if (process.env.NEXT_PUBLIC_NODE_ENV !== 'production') {
-      url =
-        process.env.NEXT_PUBLIC_SOCKETIO_HOSTNAME +
-        ':' +
-        process.env.NEXT_PUBLIC_SOCKETIO_PORT +
-        '/client?roomcode=' +
-        room.roomCode;
-    }
+    const url =
+      ((process.env.NEXT_PUBLIC_NODE_ENV !== 'production'
+        ? process.env.NEXT_PUBLIC_SOCKETIO_HOSTNAME +
+          ':' +
+          process.env.NEXT_PUBLIC_SOCKETIO_PORT
+        : process.env.NEXT_PUBLIC_SOCKETIO_PRODUCTION_HOSTNAME) as string) +
+      '/client?roomcode=' +
+      room.roomCode;
 
     console.log('platform=', process.env.NEXT_PUBLIC_NODE_ENV);
     console.log('url=', url);
