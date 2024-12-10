@@ -41,19 +41,19 @@ export default function HostRoom() {
    */
   const { Canvas } = useQRCode();
   const InfoTab = useCallback(() => {
-    let url =
-      process.env.NEXT_PUBLIC_SOCKETIO_HOSTNAME +
-      ':' +
-      process.env.NEXT_PUBLIC_SOCKETIO_PORT +
-      '/client?roomcode=' +
-      room.roomCode;
+    let url = process.env.NEXT_PUBLIC_SOCKETIO_PRODUCTION_HOSTNAME;
 
-    if (
-      process.env.NEXT_PUBLIC_NODE_ENV == 'production' &&
-      process.env.NEXT_PUBLIC_SOCKETIO_PRODUCTION_HOSTNAME
-    ) {
-      url = process.env.NEXT_PUBLIC_SOCKETIO_PRODUCTION_HOSTNAME;
+    if (process.env.NEXT_PUBLIC_NODE_ENV !== 'production') {
+      url =
+        process.env.NEXT_PUBLIC_SOCKETIO_HOSTNAME +
+        ':' +
+        process.env.NEXT_PUBLIC_SOCKETIO_PORT +
+        '/client?roomcode=' +
+        room.roomCode;
     }
+
+    console.log('platform=', process.env.NEXT_PUBLIC_NODE_ENV);
+    console.log('url=', url);
 
     return (
       <>
