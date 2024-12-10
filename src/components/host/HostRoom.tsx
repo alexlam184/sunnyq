@@ -46,7 +46,7 @@ export default function HostRoom() {
         ? process.env.NEXT_PUBLIC_SOCKETIO_HOSTNAME +
           ':' +
           process.env.NEXT_PUBLIC_SOCKETIO_PORT
-        : process.env.NEXT_PUBLIC_SOCKETIO_PRODUCTION_HOSTNAME) as string) +
+        : process.env.NEXT_PUBLIC_SOCKETIO_HOSTNAME) as string) +
       '/client?roomcode=' +
       room.roomCode;
 
