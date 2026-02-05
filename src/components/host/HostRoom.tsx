@@ -104,11 +104,11 @@ export default function HostRoom() {
   };
 
   return (
-    <div className='flex min-h-screen lg:h-screen bg-gradient-to-b from-blue-100 to-blue-200 text-gray-800 p-8 flex-col md:flex-row'>
-      <div className='w-full md:w-80 flex flex-col order-1 max-h-screen'>
+    <div className='flex min-h-screen lg:h-screen bg-gradient-to-br from-amber-50 via-rose-50 to-sky-100 text-gray-800 p-4 sm:p-6 lg:p-8 flex-col lg:flex-row'>
+      <div className='w-full lg:w-72 xl:w-80 flex flex-col order-1 max-h-screen'>
         {/* Info Field */}
         {room.phase !== ROOM_PHASE.WAITING && (
-          <div className='bg-white rounded-lg shadow-lg p-6 mb-8 flex-none'>
+          <div className='bg-white rounded-3xl shadow-lg p-6 mb-8 flex-none border border-white/70'>
             <InfoTab />
           </div>
         )}
@@ -122,12 +122,12 @@ export default function HostRoom() {
       </div>
 
       {/* Question Answer Field */}
-      <div className='flex-grow max-w-3xl bg-white rounded-lg shadow-lg p-8 md:ml-8 order-1 md:order-2 mb-8 md:mb-0'>
-        <h1 className='text-4xl font-bold mb-6 text-center text-blue-600'>
+      <div className='flex-grow max-w-4xl w-full bg-white/95 rounded-3xl shadow-lg p-5 sm:p-6 lg:p-8 lg:ml-6 order-1 lg:order-2 mb-6 lg:mb-0 border border-white/70 flex flex-col min-h-0'>
+        <h1 className='text-3xl sm:text-4xl font-black mb-5 text-center text-rose-600'>
           Host Dashboard
         </h1>
         {room.phase !== ROOM_PHASE.WAITING ? (
-          <div className='bg-gray-100 p-6 rounded-lg flex-grow'>
+          <div className='bg-rose-50/70 p-4 sm:p-6 rounded-2xl flex-1 min-h-0 border border-rose-100 w-full max-h-[70vh] lg:max-h-[72vh] overflow-y-auto'>
             {/* Question Navigation */}
             <div className='flex justify-center items-center mb-4'>
               <span className='text-xl font-bold'>
@@ -135,33 +135,36 @@ export default function HostRoom() {
               </span>
             </div>
 
-            {/* Question and Remarks */}
-            <h2 className='text-2xl font-bold mb-4 text-blue-600'>
-              Question {currentQuestionIndex + 1}
-            </h2>
-            <p className='text-xl mb-2'>
-              {room.questions[currentQuestionIndex].question}
-            </p>
-            <p className='text-sm text-gray-500 mb-4'>
-              {room.questions[currentQuestionIndex].remark}
-            </p>
+            {/* Question inside*/}
+            <div>
+              {/* Question and Remarks */}
+              <h2 className='text-2xl font-black mb-4 text-sky-600'>
+                Question {currentQuestionIndex + 1}
+              </h2>
+              <p className='text-xl mb-2'>
+                {room.questions[currentQuestionIndex].question}
+              </p>
+              <p className='text-sm text-gray-500 mb-4'>
+                {room.questions[currentQuestionIndex].remark}
+              </p>
 
-            {/* Answer Field */}
-            {room.questions[currentQuestionIndex].type ===
-              QUESTION.MultipleChoice && (
-              <div className='space-y-4'>
-                {room.questions[currentQuestionIndex].choices?.map(
-                  (choice, index) => (
-                    <div key={index} className='flex items-center text-lg'>
-                      <span className='font-semibold mr-2'>
-                        {choice.value}:
-                      </span>
-                      <span>{choice.content}</span>
-                    </div>
-                  )
-                )}
-              </div>
-            )}
+              {/* Answer Field */}
+              {room.questions[currentQuestionIndex].type ===
+                QUESTION.MultipleChoice && (
+                <div className='space-y-4'>
+                  {room.questions[currentQuestionIndex].choices?.map(
+                    (choice, index) => (
+                      <div key={index} className='flex items-center text-lg'>
+                        <span className='font-semibold mr-2'>
+                          {choice.value}:
+                        </span>
+                        <span>{choice.content}</span>
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
+            </div>
 
             {/*Pagination*/}
             <div className='pt-4'>
@@ -173,7 +176,7 @@ export default function HostRoom() {
             </div>
           </div>
         ) : (
-          <div className=' bg-gray-100 rounded-lg shadow-lg p-6 mb-8 flex items-center justify-center'>
+          <div className=' bg-rose-50/70 rounded-2xl shadow-lg p-4 sm:p-6 mb-6 flex items-center justify-center border border-rose-100'>
             <div className='flex flex-col items-start justify-center'>
               <InfoTab />
             </div>
@@ -230,7 +233,7 @@ export default function HostRoom() {
           </div>
         </div>
         {/* Buttons */}
-        <div className='flex justify-center space-x-4 mt-8'>
+        <div className='flex flex-wrap justify-center gap-4 mt-6'>
           {room.phase === ROOM_PHASE.WAITING ? (
             <Button
               buttonText='Start Game'
@@ -265,7 +268,7 @@ export default function HostRoom() {
 
       {/* Tabs Field */}
       {room.phase !== ROOM_PHASE.WAITING && (
-        <div className='flex-grow max-w-lg bg-white rounded-lg shadow-lg p-8 md:ml-8 order-1 md:order-2 mb-8 md:mb-0 space-y-4'>
+        <div className='flex-grow max-w-lg w-full bg-white/95 rounded-3xl shadow-lg p-5 sm:p-6 lg:p-8 lg:ml-6 order-1 lg:order-2 mb-6 lg:mb-0 space-y-4 border border-white/70'>
           <Tabs
             options={[
               { value: TABS.Answers, label: TABS.Answers },

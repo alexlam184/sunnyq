@@ -12,6 +12,23 @@ import { SiSpacex } from 'react-icons/si';
 import { FiArrowRight, FiMapPin } from 'react-icons/fi';
 import { useRef } from 'react';
 
+const googleOauthUrl =
+  process.env.NEXT_PUBLIC_GOOGLE_OAUTH_URL ?? '/api/auth/google';
+
+const handleGoogleLogin = () => {
+  const redirectUrl = '/host?pagestate=createRoom';
+  try {
+    const url = new URL(googleOauthUrl, window.location.origin);
+    url.searchParams.set('callbackUrl', redirectUrl);
+    window.location.href = url.toString();
+  } catch (error) {
+    const separator = googleOauthUrl.includes('?') ? '&' : '?';
+    window.location.href = `${googleOauthUrl}${separator}callbackUrl=${encodeURIComponent(
+      redirectUrl
+    )}`;
+  }
+};
+
 export default function Home() {
   return (
     <main className='flex min-h-screen flex-col items-center justify-between p-24'>
@@ -26,7 +43,9 @@ export default function Home() {
           }}
         >
           <Nav />
+
           <Hero />
+
           <Schedule />
         </ReactLenis>
       </div>
@@ -144,7 +163,7 @@ const Hero = () => {
       className='relative w-full'
     >
       <CenterImage />
-
+      <Orientation />
       <ParallaxImages />
 
       <div className='absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-zinc-950/0 to-zinc-950' />
@@ -312,5 +331,88 @@ const ScheduleItem = ({
         <FiMapPin />
       </div>
     </motion.div>
+  );
+};
+
+const Orientation = () => {
+  return (
+    <div className='absolute inset-0 z-40 backdrop-blur-sm'>
+      <section className='min-h-screen'>
+        <div className='mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center px-4 py-20 text-center'>
+          <div className='mt-8 w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm'>
+            <h2 className='text-lg font-semibold text-black'>
+              If you want to host classroom and you have an question bank in
+              Google Drive.
+            </h2>
+            <div className='mt-4'>
+              <div className='mx-auto max-w-md text-center space-y-4'>
+                <title>Login</title>
+
+                <p className='mt-2 sm:text-lg/relaxed text-black'>
+                  Sign in with Google to continue.
+                </p>
+                <div className='mt-8 flex flex-wrap justify-center gap-4'>
+                  <button
+                    type='button'
+                    onClick={handleGoogleLogin}
+                    className='group relative inline-flex items-center justify-center gap-3 rounded-full border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-800 shadow-sm transition-transform hover:-translate-y-0.5 hover:shadow-md'
+                  >
+                    <svg
+                      aria-hidden='true'
+                      viewBox='0 0 24 24'
+                      className='h-5 w-5'
+                    >
+                      <path
+                        d='M23.49 12.27c0-.81-.07-1.59-.2-2.34H12v4.43h6.48a5.54 5.54 0 0 1-2.4 3.63v3h3.88c2.27-2.1 3.53-5.19 3.53-8.72Z'
+                        fill='#4285F4'
+                      />
+                      <path
+                        d='M12 24c3.24 0 5.95-1.07 7.93-2.9l-3.88-3c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.92H1.25v3.09A12 12 0 0 0 12 24Z'
+                        fill='#34A853'
+                      />
+                      <path
+                        d='M5.28 14.34a7.2 7.2 0 0 1-.37-2.34c0-.81.13-1.6.37-2.34V6.57H1.25A12 12 0 0 0 0 12c0 1.94.47 3.77 1.25 5.43l4.03-3.09Z'
+                        fill='#FBBC05'
+                      />
+                      <path
+                        d='M12 4.74c1.76 0 3.34.6 4.59 1.78l3.44-3.44C17.94 1.19 15.23 0 12 0A12 12 0 0 0 1.25 6.57l4.03 3.09C6.23 6.84 8.88 4.74 12 4.74Z'
+                        fill='#EA4335'
+                      />
+                    </svg>
+                    Continue with Google
+                  </button>
+                </div>
+                {!process.env.NEXT_PUBLIC_GOOGLE_OAUTH_URL ? (
+                  <p className='text-xs text-gray-500'>
+                    Set `NEXT_PUBLIC_GOOGLE_OAUTH_URL` to your OAuth endpoint.
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+
+          <div className='mt-6 w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm'>
+            <h2 className='text-lg font-semibold text-black'>If you are new</h2>
+            <p className='mt-1 text-sm text-slate-600'>
+              Start as a host or join as a client.
+            </p>
+            <div className='mt-4 flex flex-wrap justify-center gap-3'>
+              <Link
+                href='/host'
+                className='inline-flex items-center justify-center rounded-full bg-green-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-transform hover:-translate-y-0.5 hover:bg-green-500'
+              >
+                Host page
+              </Link>
+              <Link
+                href='/client'
+                className='inline-flex items-center justify-center rounded-full border border-green-600 px-6 py-3 text-sm font-semibold text-green-700 shadow-sm transition-transform hover:-translate-y-0.5'
+              >
+                Client page
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 };

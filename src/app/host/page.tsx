@@ -11,6 +11,7 @@ import { useLobbyStore } from '@/store/LobbyStore';
 import { useRoomStore } from '@/store/RoomStore';
 import Modal from '@/src/components/common/Modal';
 import { useGeneralStateStore } from '@/store/GeneralStateStore';
+import { useSearchParams } from 'next/navigation';
 
 const renderSwitch = (param: PAGESTATE) => {
   switch (param) {
@@ -26,7 +27,7 @@ const renderSwitch = (param: PAGESTATE) => {
 };
 
 export default function HostPage() {
-  const { pageState } = usePageStateStore();
+  const { pageState, setPageState } = usePageStateStore();
   const { resetLobby } = useLobbyStore();
   const { addUser, setRoom } = useRoomStore();
   const {
@@ -35,6 +36,18 @@ export default function HostPage() {
     general_modalContentState,
     setGeneral_ModalContentState,
   } = useGeneralStateStore();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const pageParam = searchParams.get('pagestate');
+    if (pageParam === 'createRoom') {
+      setPageState(PAGESTATE.createRoom);
+    } else if (pageParam === 'inGame') {
+      setPageState(PAGESTATE.inGame);
+    } else if (pageParam === 'front') {
+      setPageState(PAGESTATE.front);
+    }
+  }, [searchParams, setPageState]);
 
   useEffect(() => {
     resetLobby();
