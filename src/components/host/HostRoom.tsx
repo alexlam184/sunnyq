@@ -127,47 +127,51 @@ export default function HostRoom() {
           Host Dashboard
         </h1>
         {room.phase !== ROOM_PHASE.WAITING ? (
-          <div className='bg-rose-50/70 p-4 sm:p-6 rounded-2xl flex-1 min-h-0 border border-rose-100 w-full max-h-[70vh] lg:max-h-[72vh] overflow-y-auto'>
+          <div className='bg-rose-50/70 p-4 sm:p-6 rounded-2xl flex-1 min-h-0 border border-rose-100 w-full max-h-[70vh] lg:max-h-[72vh] flex flex-col overflow-hidden'>
             {/* Question Navigation */}
-            <div className='flex justify-center items-center mb-4'>
-              <span className='text-xl font-bold'>
-                Question {currentQuestionIndex + 1} of {room.questions.length}
-              </span>
-            </div>
+            {/* Question area */}
+            <div className='flex-1 min-h-0 overflow-y-auto'>
+              <div className='flex justify-center items-center mb-4'>
+                <span className='text-xl font-bold'>
+                  Question {currentQuestionIndex + 1} of {room.questions.length}
+                </span>
+              </div>
 
-            {/* Question inside*/}
-            <div>
-              {/* Question and Remarks */}
-              <h2 className='text-2xl font-black mb-4 text-sky-600'>
-                Question {currentQuestionIndex + 1}
-              </h2>
-              <p className='text-xl mb-2'>
-                {room.questions[currentQuestionIndex].question}
-              </p>
-              <p className='text-sm text-gray-500 mb-4'>
-                {room.questions[currentQuestionIndex].remark}
-              </p>
+              {/* Question inside*/}
+              <div>
+                {/* Question and Remarks */}
+                <h2 className='text-2xl font-black mb-4 text-sky-600'>
+                  Question {currentQuestionIndex + 1}
+                </h2>
+                <p className='text-xl mb-2'>
+                  {room.questions[currentQuestionIndex].question}
+                </p>
+                <p className='text-sm text-gray-500 mb-4'>
+                  {room.questions[currentQuestionIndex].remark}
+                </p>
 
-              {/* Answer Field */}
-              {room.questions[currentQuestionIndex].type ===
-                QUESTION.MultipleChoice && (
-                <div className='space-y-4'>
-                  {room.questions[currentQuestionIndex].choices?.map(
-                    (choice, index) => (
-                      <div key={index} className='flex items-center text-lg'>
-                        <span className='font-semibold mr-2'>
-                          {choice.value}:
-                        </span>
-                        <span>{choice.content}</span>
-                      </div>
-                    )
-                  )}
-                </div>
-              )}
+                {/* Answer Field */}
+                {room.questions[currentQuestionIndex].type ===
+                  QUESTION.MultipleChoice && (
+                  <div className='space-y-4'>
+                    {room.questions[currentQuestionIndex].choices?.map(
+                      (choice, index) => (
+                        <div key={index} className='flex items-center text-lg'>
+                          <span className='font-semibold mr-2'>
+                            {choice.value}:
+                          </span>
+                          <span>{choice.content}</span>
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
+            
 
             {/*Pagination*/}
-            <div className='pt-4'>
+            <div className='pt-4 flex-none bg-rose-50/70'>
               <Pagination
                 totalPages={room.questions.length}
                 currentIndex={currentQuestionIndex}

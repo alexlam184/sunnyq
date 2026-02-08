@@ -481,14 +481,15 @@ const HostCreateRoom = () => {
   /**
    * Handle CSV Import
    */
-  const [csvFile, setCsvFile] = useState(null);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
   const [driveError, setDriveError] = useState<string | null>(null);
   const pickerLoadedRef = useRef(false);
   const pickerLoadingRef = useRef<Promise<void> | null>(null);
   const driveImportPendingKey = 'driveImportPending';
 
-  const handleFileChange = (event: any) => {
-    setCsvFile(event.target.files[0]);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    setCsvFile(file);
   };
 
   const getRoomNameFromFile = (filename?: string) => {
