@@ -1,7 +1,7 @@
 'use client';
 
 import HostIdle from '@src/components/host/HostIdle';
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import HostCreateRoom from '@/src/components/host/HostCreateRoom';
 import { PAGESTATE, MESSAGE } from '@/src/lib/enum';
 import HostRoom from '@/src/components/host/HostRoom';
@@ -26,7 +26,7 @@ const renderSwitch = (param: PAGESTATE) => {
   }
 };
 
-export default function HostPage() {
+function HostPageInner() {
   const { pageState, setPageState } = usePageStateStore();
   const { resetLobby } = useLobbyStore();
   const { addUser, setRoom } = useRoomStore();
@@ -95,5 +95,13 @@ export default function HostPage() {
         contentState={general_modalContentState}
       />
     </div>
+  );
+}
+
+export default function HostPage() {
+  return (
+    <Suspense fallback={null}>
+      <HostPageInner />
+    </Suspense>
   );
 }
