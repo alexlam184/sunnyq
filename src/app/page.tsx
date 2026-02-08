@@ -8,8 +8,7 @@ import {
   useScroll,
   useTransform,
 } from 'framer-motion';
-import { SiSpacex } from 'react-icons/si';
-import { FiArrowRight, FiMapPin } from 'react-icons/fi';
+import { FiMapPin } from 'react-icons/fi';
 import { useRef } from 'react';
 
 const googleOauthUrl =
@@ -42,8 +41,6 @@ export default function Home() {
             //   syncTouch: true,
           }}
         >
-          <Nav />
-
           <Hero />
 
           <Schedule />
@@ -111,48 +108,6 @@ export default function Home() {
     </main>
   );
 }
-
-const Nav = () => {
-  return (
-    <nav className='fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-3 text-white'>
-      <div className='flex flex-row items-center'>
-        <SiSpacex className='text-3xl mix-blend-difference' />
-        <span>SunnyQ</span>
-      </div>
-      <Link
-        href='/host'
-        className='flex items-center gap-1 text-xs text-zinc-400'
-        target='_blank'
-      >
-        HOST
-      </Link>
-      <Link
-        href='/client'
-        className='flex items-center gap-1 text-xs text-zinc-400'
-        target='_blank'
-      >
-        CLIENT
-      </Link>
-      <Link
-        href='/test'
-        className='flex items-center gap-1 text-xs text-zinc-400'
-        target='_blank'
-      >
-        TEST
-      </Link>
-      <button
-        onClick={() => {
-          document.getElementById('launch-schedule')?.scrollIntoView({
-            behavior: 'smooth',
-          });
-        }}
-        className='flex items-center gap-1 text-xs text-zinc-400'
-      >
-        CREDIT <FiArrowRight />
-      </button>
-    </nav>
-  );
-};
 
 const SECTION_HEIGHT = 1500;
 
@@ -306,6 +261,23 @@ const Schedule = () => {
   );
 };
 
+const Intro = () => {
+  return (
+    <section className='mx-auto max-w-5xl px-4 py-24 text-white'>
+      <div className='rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur'>
+        <h2 className='text-3xl font-black uppercase text-zinc-50'>
+          What Is SunnyQ
+        </h2>
+        <p className='mt-4 text-lg text-zinc-200'>
+          SunnyQ is a multiplayer online quiz application that helps teachers
+          and students interact in real time. Run live quizzes, see responses
+          instantly, and turn class time into a shared, engaging experience.
+        </p>
+      </div>
+    </section>
+  );
+};
+
 const ScheduleItem = ({
   developerName,
   date,
@@ -336,7 +308,8 @@ const ScheduleItem = ({
 
 const Orientation = () => {
   return (
-    <div className='absolute inset-0 z-40 backdrop-blur-sm'>
+    <div className='absolute inset-0 z-40'>
+      <Intro />
       <section className='min-h-screen'>
         <div className='mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center px-4 py-20 text-center'>
           <div className='mt-8 w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm'>
